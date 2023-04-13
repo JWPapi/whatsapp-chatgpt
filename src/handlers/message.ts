@@ -21,6 +21,7 @@ import { transcribeOpenAI } from "../providers/openai";
 
 // For deciding to ignore old messages
 import { botReadyTimestamp } from "../index";
+import {handleMessageNotion} from "./notion";
 
 // Handles message
 async function handleIncomingMessage(message: Message) {
@@ -104,7 +105,7 @@ async function handleIncomingMessage(message: Message) {
 		message.reply(reply);
 
 		// Handle message GPT
-		await handleMessageGPT(message, transcribedText);
+		//sawait handleMessageGPT(message, transcribedText);
 		return;
 	}
 
@@ -136,6 +137,13 @@ async function handleIncomingMessage(message: Message) {
 	if (startsWithIgnoreCase(messageString, config.dallePrefix)) {
 		const prompt = messageString.substring(config.dallePrefix.length + 1);
 		await handleMessageDALLE(message, prompt);
+		return;
+	}
+
+	// Notion (!notion <prompt>)
+	if (startsWithIgnoreCase(messageString, config.notionPrefix)) {
+		const prompt = messageString.substring(config.notionPrefix.length + 1);
+		await handleMessageNotion(message, prompt);
 		return;
 	}
 

@@ -23,6 +23,7 @@ interface IConfig {
 	dallePrefix: string;
 	resetPrefix: string;
 	aiConfigPrefix: string;
+	notionPrefix: string;
 
 	// Groupchats
 	groupchatsEnabled: boolean;
@@ -64,6 +65,7 @@ const config: IConfig = {
 	dallePrefix: process.env.DALLE_PREFIX || "!dalle", // Default: !dalle
 	resetPrefix: process.env.RESET_PREFIX || "!reset", // Default: !reset
 	aiConfigPrefix: process.env.AI_CONFIG_PREFIX || "!config", // Default: !config
+	notionPrefix: process.env.NOTION_PREFIX || "notion", // Default: !notion
 
 	// Groupchats
 	groupchatsEnabled: getEnvBooleanWithDefault("GROUPCHATS_ENABLED", false), // Default: false
