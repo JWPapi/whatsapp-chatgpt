@@ -17,12 +17,11 @@ const handleMessageNotion = async (message: Message, prompt: string) => {
             await message.reply(`*List of all entries:*\n [ ] ${toDos.join("\n [ ] ")}`)
             return
         }
-        
+
 
         await addEntryToDB(prompt, user.db, notion)
         await message.reply(`Added to ${user.name} Notion: ${prompt}`)
-
-
+        
     } catch (error: any) {
         console.error("An error occured", error);
         await message.reply("An error occured, please contact the administrator. (" + error.message + ")");
