@@ -17,6 +17,7 @@ const handleMessageNotion = async (message: Message, prompt: string) => {
             await message.reply(`*List of all entries:*\n [ ] ${toDos.join("\n [ ] ")}`)
             return
         }
+        
 
         await addEntryToDB(prompt, user.db, notion)
         await message.reply(`Added to ${user.name} Notion: ${prompt}`)
