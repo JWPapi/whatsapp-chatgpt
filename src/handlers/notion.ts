@@ -21,7 +21,7 @@ const handleMessageNotion = async (message: Message, prompt: string) => {
 
         await addEntryToDB(prompt, user.db, notion)
         await message.reply(`Added to ${user.name} Notion: ${prompt}`)
-        
+
     } catch (error: any) {
         console.error("An error occured", error);
         await message.reply("An error occured, please contact the administrator. (" + error.message + ")");
@@ -83,6 +83,7 @@ const getEntriesFromDB = async (database: string, client: Object) => {
 const getUserInfo = (prompt: string, message: Message) => {
     const jwDatabaseId = 'b430559a3ced44c1bf2b5db8285853c1'
     const kdDatabaseId = 'c13d709df5124795bd977dd019c7bde5'
+    prompt = prompt.toLowerCase()
     if (prompt.startsWith("julian") || prompt.startsWith("list julian")) return {db:jwDatabaseId, name: "Julian"}
     if (prompt.startsWith("kambiz") || prompt.startsWith("list kambiz")) return {db:kdDatabaseId, name: "Kambiz"}
     if (message.from  == "4915112960532@c.us") return {db:jwDatabaseId, name: "Julian"}
