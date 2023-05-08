@@ -49,6 +49,8 @@ interface IConfig {
 	transcriptionEnabled: boolean;
 	transcriptionMode: TranscriptionMode;
 	transcriptionLanguage: string;
+	transcriptionSingleMode: boolean,
+	transcriptionSingleModeNumbers: string,
 }
 
 // Config
@@ -94,7 +96,9 @@ const config: IConfig = {
 	// Transcription
 	transcriptionEnabled: getEnvBooleanWithDefault("TRANSCRIPTION_ENABLED", false), // Default: false
 	transcriptionMode: getEnvTranscriptionMode(), // Default: local
-	transcriptionLanguage: process.env.TRANSCRIPTION_LANGUAGE || "" // Default: null
+	transcriptionLanguage: process.env.TRANSCRIPTION_LANGUAGE || "" ,// Default: null
+	transcriptionSingleMode: getEnvBooleanWithDefault("TRANSCRIPTION_SINGLE_MODE", false), // Default: false
+	transcriptionSingleModeNumbers: process.env.TRANSCRIPTION_SINGLE_MODE_NUMBERS || "" // Default: ""
 };
 
 /**

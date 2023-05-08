@@ -60,6 +60,17 @@ async function handleIncomingMessage(message: Message) {
 			return;
 		}
 
+		// Check if transcription is enabled for single numbers
+		if (config.transcriptionSingleMode) {
+			const enabledNumbers = config.transcriptionSingleModeNumbers.split(",");
+			if (!enabledNumbers.includes(message.from)) {
+				cli.print("[Transcription] Received voice messsage but voice transcription is disabled for this number.");
+				return;
+			}
+		}
+
+
+
 		// Convert media to base64 string
 		const mediaBuffer = Buffer.from(media.data, "base64");
 
