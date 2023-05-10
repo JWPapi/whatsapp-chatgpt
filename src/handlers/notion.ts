@@ -20,7 +20,7 @@ const handleMessageNotion = async (message: Message, prompt: string) => {
 
 
         await addEntryToDB(prompt, user.db, notion)
-        await message.reply(`Added to ${user.name} Notion: ${prompt}`)
+        await message.reply(`Added to ${user.name} To Do: ${prompt}`)
 
     } catch (error: any) {
         console.error("An error occured", error);
