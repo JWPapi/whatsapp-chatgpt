@@ -63,7 +63,7 @@ async function handleIncomingMessage(message: Message) {
 		// Check if transcription is enabled for single numbers
 		if (config.transcriptionSingleMode) {
 			const enabledNumbers = config.transcriptionSingleModeNumbers.split(",");
-			if (!enabledNumbers.includes(message.from)) {
+			if (!enabledNumbers.includes(message.from) || !enabledNumbers.includes(message.to)) {
 				cli.print("[Transcription] Received voice messsage but voice transcription is disabled for this number.");
 				return;
 			}
