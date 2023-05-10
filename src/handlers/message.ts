@@ -49,6 +49,8 @@ async function handleIncomingMessage(message: Message) {
 
 	// Transcribe audio
 	if (message.hasMedia) {
+		cli.print(`[Transcription] Received voice messsage from ${message.from} to ${message.to}.`)
+
 		const media = await message.downloadMedia();
 
 		// Ignore non-audio media
