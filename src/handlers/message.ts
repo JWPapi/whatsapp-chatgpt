@@ -10,7 +10,8 @@ import * as cli from "../cli/ui";
 // ChatGPT & DALLE
 import { handleMessageGPT, handleDeleteConversation } from "../handlers/gpt";
 import { handleMessageDALLE } from "../handlers/dalle";
-import { handleMessageAIConfig } from "../handlers/ai-config";
+import { handleMessageAIConfig, getConfig, executeCommand } from "../handlers/ai-config";
+import { handleMessageLangChain } from "../handlers/langchain";
 
 // Speech API & Whisper
 import { TranscriptionMode } from "../types/transcription-mode";
@@ -47,6 +48,14 @@ async function handleIncomingMessage(message: Message) {
 	// Ignore groupchats if disabled
 	if ((await message.getChat()).isGroup && !config.groupchatsEnabled) return;
 
+	const selfNotedMessage = message.fromMe && message.hasQuotedMsg === false && message.from === message.to;
+	const whitelistedPhoneNumbers = getConfig("general", "whitelist");
+
+	if (!selfNotedMessage && whitelistedPhoneNumbers.length > 0 && !whitelistedPhoneNumbers.includes(message.from)) {
+		cli.print(`Ignoring message from ${message.from} because it is not whitelisted.`);
+		return;
+	}
+
 	// Transcribe audio
 	if (message.hasMedia) {
 		cli.print(`[Transcription] Received voice messsage from ${message.from} to ${message.to}.`)
@@ -57,7 +66,7 @@ async function handleIncomingMessage(message: Message) {
 		if (!media || !media.mimetype.startsWith("audio/")) return;
 
 		// Check if transcription is enabled (Default: false)
-		if (!config.transcriptionEnabled) {
+		if (!getConfig("transcription", "enabled")) {
 			cli.print("[Transcription] Received voice messsage but voice transcription is disabled.");
 			return;
 		}
@@ -79,10 +88,11 @@ async function handleIncomingMessage(message: Message) {
 		const mediaBuffer = Buffer.from(media.data, "base64");
 
 		// Transcribe locally or with Speech API
-		cli.print(`[Transcription] Transcribing audio with "${config.transcriptionMode}" mode...`);
+		const transcriptionMode = getConfig("transcription", "mode");
+		cli.print(`[Transcription] Transcribing audio with "${transcriptionMode}" mode...`);
 
 		let res;
-		switch (config.transcriptionMode) {
+		switch (transcriptionMode) {
 			case TranscriptionMode.Local:
 				res = await transcribeAudioLocal(mediaBuffer);
 				break;
@@ -96,7 +106,7 @@ async function handleIncomingMessage(message: Message) {
 				res = await transcribeRequest(new Blob([mediaBuffer]));
 				break;
 			default:
-				cli.print(`[Transcription] Unsupported transcription mode: ${config.transcriptionMode}`);
+				cli.print(`[Transcription] Unsupported transcription mode: ${transcriptionMode}`);
 		}
 		const { text: transcribedText, language: transcribedLanguage } = res;
 
@@ -137,14 +147,17 @@ async function handleIncomingMessage(message: Message) {
 		return;
 	}
 
-	// GPT (only <prompt>)
-
-	const selfNotedMessage = message.fromMe && message.hasQuotedMsg === false && message.from === message.to;
-
 	// GPT (!gpt <prompt>)
 	if (startsWithIgnoreCase(messageString, config.gptPrefix)) {
 		const prompt = messageString.substring(config.gptPrefix.length + 1);
 		await handleMessageGPT(message, prompt);
+		return;
+	}
+
+	// GPT (!lang <prompt>)
+	if (startsWithIgnoreCase(messageString, config.langChainPrefix)) {
+		const prompt = messageString.substring(config.langChainPrefix.length + 1);
+		await handleMessageLangChain(message, prompt);
 		return;
 	}
 
@@ -162,6 +175,14 @@ async function handleIncomingMessage(message: Message) {
 		return;
 	}
 
+	// Stable Diffusion (!sd <prompt>)
+	if (startsWithIgnoreCase(messageString, config.stableDiffusionPrefix)) {
+		const prompt = messageString.substring(config.stableDiffusionPrefix.length + 1);
+		await executeCommand("sd", "generate", message, prompt);
+		return;
+	}
+
+	// GPT (only <prompt>)
 	if (!config.prefixEnabled || (config.prefixSkippedForMe && selfNotedMessage)) {
 		await handleMessageGPT(message, messageString);
 		return;
