@@ -11,7 +11,6 @@ import * as cli from "../cli/ui";
 import { handleMessageGPT, handleDeleteConversation } from "../handlers/gpt";
 import { handleMessageDALLE } from "../handlers/dalle";
 import { handleMessageAIConfig, getConfig, executeCommand } from "../handlers/ai-config";
-import { handleMessageLangChain } from "../handlers/langchain";
 
 // Speech API & Whisper
 import { TranscriptionMode } from "../types/transcription-mode";
@@ -50,11 +49,11 @@ async function handleIncomingMessage(message: Message) {
 	if ((await message.getChat()).isGroup && !config.groupchatsEnabled) return;
 
 	const selfNotedMessage = message.fromMe && message.hasQuotedMsg === false && message.from === message.to;
-	
+
 
 	if (config.whitelistedEnabled) {
 		const whitelistedPhoneNumbers = getConfig("general", "whitelist");
-	
+
 		if (!selfNotedMessage && whitelistedPhoneNumbers.length > 0 && !whitelistedPhoneNumbers.includes(message.from)) {
 			cli.print(`Ignoring message from ${message.from} because it is not whitelisted.`);
 			return;
@@ -76,15 +75,17 @@ async function handleIncomingMessage(message: Message) {
 		}
 
 		// Check if transcription is enabled for single numbers
-		if (config.transcriptionSingleMode) {
-			const enabledNumbers = config.transcriptionSingleModeNumbers.split(",");
-			if (enabledNumbers.includes(message.from) || enabledNumbers.includes(message.to)) {
 
-			} else {
-				cli.print("[Transcription] Received voice messsage but voice transcription is disabled for this number.");
-				return
-			}
+		const singleMode = config.transcriptionSingleMode
+		const enabledNumbers = singleMode ? config.transcriptionSingleModeNumbers.split(",") : []
+		const isFromToEnabled = enabledNumbers.includes(message.from) || enabledNumbers.includes(message.to);
+
+		if (!isFromToEnabled) {
+			cli.print("[Transcription] Received voice messsage but voice transcription is disabled for this number.");
+			return
 		}
+
+
 
 
 
