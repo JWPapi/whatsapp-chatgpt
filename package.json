@@ -22,9 +22,9 @@
 		"langchain": "0.0.62",
 		"openai": "^3.3.0",
 		"picocolors": "^1.0.0",
-		"qrcode-terminal": "^",
+		"qrcode-terminal": "github:artradeapp/qrcode-terminal",
 		"vite-node": "^0.31.1",
-		"whatsapp-web.js": "https://github.com/Julzk/whatsapp-web.js/tarball/jkr_hotfix_7"
+		"whatsapp-web.js": "https://github.com/Julzk/whatsappweb.js/tarball/jkr_hotfix_7"
 	},
 	"devDependencies": {
 		"@types/fluent-ffmpeg": "^2.1.21",
