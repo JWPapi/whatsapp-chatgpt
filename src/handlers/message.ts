@@ -87,8 +87,6 @@ async function handleIncomingMessage(message: Message) {
 
 
 
-
-
 		// Convert media to base64 string
 		const mediaBuffer = Buffer.from(media.data, "base64");
 
