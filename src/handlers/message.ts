@@ -21,7 +21,12 @@ import { transcribeOpenAI } from "../providers/openai";
 
 // For deciding to ignore old messages
 import { botReadyTimestamp } from "../index";
+
+//For Notion
 import {handleMessageNotion} from "./notion";
+
+//For LangChain
+import {handleMessageLangChain} from "./langchain";
 
 // Handles message
 async function handleIncomingMessage(message: Message) {
