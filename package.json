@@ -24,7 +24,7 @@
 		"picocolors": "^1.0.0",
 		"qrcode-terminal": "github:artradeapp/qrcode-terminal",
 		"vite-node": "^0.31.1",
-		"whatsapp-web.js": "github:elhumbertoz/whatsapp-web.js#patch-2"
+		"whatsapp-web.js": "^1.23.0"
 	},
 	"devDependencies": {
 		"@types/fluent-ffmpeg": "^2.1.21",
