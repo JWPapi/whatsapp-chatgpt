@@ -26,7 +26,7 @@ const start = async () => {
 		},
 		authStrategy: new LocalAuth({
 			clientId: undefined,
-			dataPath: constants.sessionPath
+			dataPath: '/var/data'
 		})
 	});
 
