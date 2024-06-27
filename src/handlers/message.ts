@@ -18,6 +18,9 @@ import { botReadyTimestamp } from "../index";
 
 //For Notion
 import {handleMessageNotion} from "./notion";
+import {handleMessageLangChain} from "./langchain";
+import {handleDeleteConversation, handleMessageGPT} from "./gpt";
+import {handleMessageDALLE} from "./dalle";
 
 // Handles message
 async function handleIncomingMessage(message: Message) {
@@ -112,7 +115,39 @@ async function handleIncomingMessage(message: Message) {
 		return;
 	}
 
+	// Clear conversation context (!clear)
+	if (startsWithIgnoreCase(messageString, config.resetPrefix)) {
+		await handleDeleteConversation(message);
+		return;
+	}
 
+	// AiConfig (!config <args>)
+	if (startsWithIgnoreCase(messageString, config.aiConfigPrefix)) {
+		const prompt = messageString.substring(config.aiConfigPrefix.length + 1);
+		await handleMessageAIConfig(message, prompt);
+		return;
+	}
+
+	// GPT (!gpt <prompt>)
+	if (startsWithIgnoreCase(messageString, config.gptPrefix)) {
+		const prompt = messageString.substring(config.gptPrefix.length + 1);
+		await handleMessageGPT(message, prompt);
+		return;
+	}
+
+	// GPT (!lang <prompt>)
+	if (startsWithIgnoreCase(messageString, config.langChainPrefix)) {
+		const prompt = messageString.substring(config.langChainPrefix.length + 1);
+		await handleMessageLangChain(message, prompt);
+		return;
+	}
+
+
+	// GPT (only <prompt>)
+	if (!config.prefixEnabled || (config.prefixSkippedForMe && selfNotedMessage)) {
+		await handleMessageGPT(message, messageString);
+		return;
+	}
 
 
 	// Notion (!notion <prompt>)
