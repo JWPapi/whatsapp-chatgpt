@@ -27,7 +27,7 @@ const start = async () => {
 			args: ["--no-sandbox"]
 		},
 		authStrategy: new LocalAuth({
-			dataPath: '/var/data6'
+			dataPath: '/var/data'
 		}),
 		webVersionCache: {
 			type: "remote",
