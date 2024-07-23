@@ -11,12 +11,14 @@ import { handleIncomingMessage } from "./handlers/message";
 // Config
 import { initAiConfig } from "./handlers/ai-config";
 import { initOpenAI } from "./providers/openai";
+import { initPerplexity } from "./providers/perplexity";
 
 // Ready timestamp of the bot
 let botReadyTimestamp: Date | null = null;
 
 // Entrypoint
 const start = async () => {
+	const wwebVersion = "2.2412.54";
 	cli.printIntro();
 
 	// WhatsApp Client
@@ -25,10 +27,13 @@ const start = async () => {
 			args: ["--no-sandbox"]
 		},
 		authStrategy: new LocalAuth({
-			clientId: undefined,
-			dataPath: '/var/data'
-		})
-	});
+			dataPath: '/var/data6'
+		}),
+		webVersionCache: {
+			type: "remote",
+			remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`
+		}
+	})
 
 	// WhatsApp auth
 	client.on(Events.QR_RECEIVED, (qr: string) => {
@@ -64,6 +69,7 @@ const start = async () => {
 
 		initAiConfig();
 		initOpenAI();
+		initPerplexity();
 	});
 
 	// WhatsApp message

@@ -20,7 +20,7 @@ import { botReadyTimestamp } from "../index";
 import {handleMessageNotion} from "./notion";
 import {handleMessageLangChain} from "./langchain";
 import {handleDeleteConversation, handleMessageGPT} from "./gpt";
-import {handleMessageDALLE} from "./dalle";
+import {handleMessageResearch} from "./handleMessageResearch";
 
 // Handles message
 async function handleIncomingMessage(message: Message) {
@@ -72,15 +72,7 @@ async function handleIncomingMessage(message: Message) {
 			return;
 		}
 
-		// Check if transcription is enabled for single numbers
-		const singleMode = config.transcriptionSingleMode
-		const enabledNumbers = singleMode ? config.transcriptionSingleModeNumbers.split(",") : []
-		const isFromToEnabled = enabledNumbers.includes(message.from) || enabledNumbers.includes(message.to);
 
-		if (!isFromToEnabled && singleMode) {
-			cli.print("[Transcription] Received voice messsage but voice transcription is disabled for this number.");
-			return
-		}
 
 		// Convert media to base64 string
 		const mediaBuffer = Buffer.from(media.data, "base64");
@@ -146,6 +138,13 @@ async function handleIncomingMessage(message: Message) {
 	// GPT (only <prompt>)
 	if (!config.prefixEnabled || (config.prefixSkippedForMe && selfNotedMessage)) {
 		await handleMessageGPT(message, messageString);
+		return;
+	}
+
+	//research
+	if (startsWithIgnoreCase(messageString, "research")) {
+		const prompt = messageString.substring("research".length + 1);
+		await handleMessageResearch(message, prompt);
 		return;
 	}
 
