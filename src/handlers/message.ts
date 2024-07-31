@@ -23,8 +23,6 @@ import { transcribeOpenAI } from "../providers/openai";
 import { botReadyTimestamp } from "../index";
 import { handleMessageNotion } from "./notion";
 // @ts-ignore
-import { handleMessageCarValuation } from "./car-valuator";
-
 // Handles message
 async function handleIncomingMessage(message: Message) {
 	let messageString = message.body;
@@ -191,10 +189,6 @@ async function handleIncomingMessage(message: Message) {
 		return;
 	}
 
-	if (startsWithIgnoreCase(messageString, "bewerte")) {
-		await handleMessageCarValuation(message, messageString);
-		return;
-	}
 }
 
 export { handleIncomingMessage };
