@@ -22,6 +22,7 @@ import { transcribeOpenAI } from "../providers/openai";
 // For deciding to ignore old messages
 import { botReadyTimestamp } from "../index";
 import { handleMessageNotion } from "./notion";
+import {handleMessageResearch} from "./handleMessageResearch";
 // @ts-ignore
 // Handles message
 async function handleIncomingMessage(message: Message) {
@@ -186,6 +187,11 @@ async function handleIncomingMessage(message: Message) {
 	if (startsWithIgnoreCase(messageString, config.notionPrefix)) {
 		const prompt = messageString.substring(config.notionPrefix.length + 1);
 		await handleMessageNotion(message, prompt);
+		return;
+	}
+
+	if (startsWithIgnoreCase(messageString, 'research')) {
+		await handleMessageResearch(message, messageString);
 		return;
 	}
 
