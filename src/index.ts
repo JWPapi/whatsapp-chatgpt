@@ -78,7 +78,6 @@ const start = async () => {
 		if (message.from == constants.statusBroadcast) return;
 
 		// Ignore if it's a quoted message, (e.g. Bot reply)
-		if (message.hasQuotedMsg) return;
 
 		await handleIncomingMessage(message);
 	});
