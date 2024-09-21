@@ -15,7 +15,7 @@ const handleMessageResearch = async (message: Message, prompt: string) => {
 
         // Create new conversation
         const conv = await perplexity.chat.completions.create({
-            model: 'llama-3-sonar-small-32k-online',
+            model: 'llama-3.1-sonar-small-128k-online',
             messages: [
                 {
                     role: 'user',
