@@ -29,7 +29,7 @@ const handleMessageDALLE = async (message: any, prompt: any) => {
 			model: "dall-e-3",
 			prompt: prompt,
 			n: 1,
-			size: aiConfig.dalle.size as CreateImageRequestSizeEnum,
+			size: '1024x1792',
 			response_format: "b64_json"
 		});
 
