@@ -1,7 +1,5 @@
 import { MessageMedia } from "whatsapp-web.js";
 import { openai } from "../providers/openai";
-import { aiConfig } from "./ai-config";
-import { CreateImageRequestSizeEnum } from "openai";
 import config from "../config";
 import * as cli from "../cli/ui";
 
@@ -32,10 +30,11 @@ const handleMessageDALLE = async (message: any, prompt: any) => {
 			size: '1024x1792',
 			response_format: "b64_json"
 		});
+		console.log(response.data[0].b64_json)
 
 		const end = Date.now() - start;
 
-		const base64 = response.data.data[0].b64_json as string;
+		const base64 = response.data[0].b64_json as string;
 		const image = new MessageMedia("image/jpeg", base64, "image.jpg");
 
 		cli.print(`[DALL-E] Answer to ${message.from} | OpenAI request took ${end}ms`);
