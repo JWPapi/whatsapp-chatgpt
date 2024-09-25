@@ -72,11 +72,8 @@ export async function chatCompletion(message, options = {}) {
         {
           role: 'user', content: message,
         }],
-      temperature: options.temperature || 0.7,
-      max_tokens: options.max_tokens || getConfig('gpt', 'maxModelTokens'),
-      top_p: options.top_p || 0.9,
-      frequency_penalty: options.frequency_penalty || 0,
-      presence_penalty: options.presence_penalty || 0,
+      max_completion_tokens: config.openAIModel === 'o1-mini' ? 40000 : undefined,
+
     });
 
     return completion.choices[0].message.content;
