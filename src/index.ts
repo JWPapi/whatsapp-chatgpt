@@ -87,7 +87,7 @@ const start = async () => {
 		if (message.from == constants.statusBroadcast) return;
 
 		// Ignore if it's a quoted message, (e.g. Bot reply)
-		if (message.hasQuotedMsg) return;
+		//if (message.hasQuotedMsg) return;
 
 		// Ignore if it's not from me
 		if (!message.fromMe) return;
