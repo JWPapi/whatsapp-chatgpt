@@ -1,7 +1,6 @@
 import process from "process";
 
 import { TranscriptionMode } from "./types/transcription-mode";
-import { AWSPollyEngine } from "./types/aws-polly-engine";
 
 // Environment variables
 import dotenv from "dotenv";
@@ -25,7 +24,6 @@ interface IConfig {
 	dallePrefix: string;
 	langChainPrefix: string;
 	resetPrefix: string;
-	notionPrefix: string;
 
 	// Groupchats
 	groupchatsEnabled: boolean;
@@ -35,7 +33,6 @@ interface IConfig {
 	promptModerationBlacklistedCategories: string[];
 
 	// Voice transcription & Text-to-Speech
-	transcriptionEnabled: boolean;
 	transcriptionMode: TranscriptionMode;
 	transcriptionLanguage: string;
 
@@ -58,7 +55,6 @@ export const config: IConfig = {
 	gptPrefix: process.env.GPT_PREFIX || "!gpt", // Default: !gpt
 	dallePrefix: process.env.DALLE_PREFIX || "!dalle", // Default: !dalle
 	resetPrefix: process.env.RESET_PREFIX || "!reset", // Default: !reset
-	notionPrefix: process.env.NOTION_PREFIX || "notion", // Default: !notion
 	langChainPrefix: process.env.LANGCHAIN_PREFIX || "!lang", // Default: !lang
 
 	// Groupchats
@@ -68,8 +64,6 @@ export const config: IConfig = {
 	promptModerationEnabled: getEnvBooleanWithDefault("PROMPT_MODERATION_ENABLED", false), // Default: false
 	promptModerationBlacklistedCategories: getEnvPromptModerationBlacklistedCategories(), // Default: ["hate", "hate/threatening", "self-harm", "sexual", "sexual/minors", "violence", "violence/graphic"]
 
-	// Transcription
-	transcriptionEnabled: getEnvBooleanWithDefault("TRANSCRIPTION_ENABLED", false), // Default: false
 
 };
 

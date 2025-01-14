@@ -92,8 +92,8 @@ async function handleIncomingMessage(message: Message) {
         const mediaBuffer = Buffer.from(media.data, "base64");
 
         // Transcribe locally or with Speech API
-        const transcriptionMode = getConfig("transcription", "mode");
-        cli.print(`[Transcription] Transcribing audio with "${transcriptionMode}" mode...`);
+        const transcriptionMode = 'openai'
+        cli.print(`[Transcription] Transcribing audio with "${transcriptionMode}" ...`);
 
         const res = await transcribeOpenAI(mediaBuffer);
 

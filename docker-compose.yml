@@ -8,7 +8,6 @@ services:
             OPENAI_API_KEY: ""
             OPENAI_GPT_MODEL: ""
             PREFIX_ENABLED: ""
-            SERPAPI_API_KEY: ""
         restart: unless-stopped
         volumes:
             - session-data:/app/session
