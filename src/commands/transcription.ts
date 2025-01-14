@@ -16,7 +16,7 @@ export const TranscriptionModule: ICommandModule = {
 const enabled: ICommandDefinition = {
 	help: "<value> - Toggle if transcription is enabled",
 	hint: "true, false",
-	data: config.transcriptionEnabled,
+	data: true,
 	execute: function (message: Message, valueStr?: string) {
 		if (["true", "false"].indexOf(valueStr || "") < 0) {
 			message.reply(`Invalid value, please specify true or false`);

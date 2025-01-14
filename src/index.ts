@@ -77,7 +77,6 @@ const start = async () => {
 		// Ignore if message is from status broadcast
 		if (message.from == constants.statusBroadcast) return;
 
-
 		await handleIncomingMessage(message);
 	});
 

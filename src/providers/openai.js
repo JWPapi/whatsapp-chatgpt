@@ -35,11 +35,11 @@ export async function transcribeOpenAI(audioBuffer) {
 
   try {
     const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(wavPath), model: 'whisper-1', language: config.transcriptionLanguage || undefined,
+      file: fs.createReadStream(wavPath), model: 'whisper-1'
     });
 
     return {
-      text: transcription.text, language: config.transcriptionLanguage || '',
+      text: transcription.text
     };
   } catch (e) {
     console.error(e);
