@@ -45,7 +45,7 @@ export const config: IConfig = {
 
 
 	openAIAPIKeys: (process.env.OPENAI_API_KEYS || process.env.OPENAI_API_KEY || "").split(",").filter((key) => !!key), // Default: []
-	openAIModel: "o1-mini",
+	openAIModel: "gpt-4o",
 	maxModelTokens: getEnvMaxModelTokens(), // Default: 4096
 	prePrompt: process.env.PRE_PROMPT, // Default: undefined
 
