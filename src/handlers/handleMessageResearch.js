@@ -1,6 +1,6 @@
 // const { Message } = require("whatsapp-web.js"); // Message type often not needed in JS
-// Use the exported getter function for perplexity instance
-import { perplexity as getPerplexityInstance } from "../providers/perplexity.js";
+// Use the exported perplexity client instance directly
+import { perplexity as perplexityClient } from "../providers/perplexity.js"; // Import the instance, rename for clarity
 import * as cli from "../cli/ui.js";
 
 // Mapping from number to last conversation id (if needed for research context)
@@ -8,7 +8,8 @@ import * as cli from "../cli/ui.js";
 
 export const handleMessageResearch = async (message, prompt) => { // Removed : Message, : string types, added export
     try {
-        const perplexity = getPerplexityInstance();
+        // Use the imported client instance directly
+        const perplexity = perplexityClient; // Assign the imported instance
         if (!perplexity) {
              message.reply("Error: Perplexity AI client is not initialized or API key is missing.");
              console.error("[Research] Perplexity client not initialized.");
