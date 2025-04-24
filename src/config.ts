@@ -1,9 +1,10 @@
-import process from "process";
+const process = require("process");
 
-import { TranscriptionMode } from "./types/transcription-mode";
+// Require the JS version of TranscriptionMode
+const { TranscriptionMode } = require("./types/transcription-mode");
 
 // Environment variables
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 dotenv.config();
 
 // Config Interface
@@ -38,8 +39,10 @@ interface IConfig {
 
 }
 
+// Removed IConfig interface
+
 // Config
-export const config: IConfig = {
+const config = { // Removed : IConfig type and export const
 	whitelistedPhoneNumbers: process.env.WHITELISTED_PHONE_NUMBERS?.split(",") || [],
     whitelistedEnabled: getEnvBooleanWithDefault("WHITELISTED_ENABLED", false),
 
@@ -62,9 +65,11 @@ export const config: IConfig = {
 
 	// Prompt Moderation
 	promptModerationEnabled: getEnvBooleanWithDefault("PROMPT_MODERATION_ENABLED", false), // Default: false
-	promptModerationBlacklistedCategories: getEnvPromptModerationBlacklistedCategories(), // Default: ["hate", "hate/threatening", "self-harm", "sexual", "sexual/minors", "violence", "violence/graphic"]
+	promptModerationBlacklistedCategories: getEnvPromptModerationBlacklistedCategories(), // Default: ["hate", "hate/threatening", "self-harm", "sexual", "sexual/minors", "violence", "violence/graphic"],
 
-
+	// Add transcription related fields explicitly if they were in IConfig
+	transcriptionMode: process.env.TRANSCRIPTION_MODE || TranscriptionMode.OpenAI, // Use the imported JS object
+	transcriptionLanguage: process.env.TRANSCRIPTION_LANGUAGE || "en", // Default language if needed
 };
 
 /**
@@ -86,7 +91,7 @@ function getEnvMaxModelTokens() {
  * @param defaultValue The default value
  * @returns The value of the environment variable or the default value
  */
-function getEnvBooleanWithDefault(key: string, defaultValue: boolean): boolean {
+function getEnvBooleanWithDefault(key, defaultValue) { // Removed : string, : boolean types
 	const envValue = process.env[key]?.toLowerCase();
 	if (envValue == undefined || envValue == "") {
 		return defaultValue;
@@ -108,9 +113,5 @@ function getEnvPromptModerationBlacklistedCategories(): string[] {
 	}
 }
 
-
-
-
-
-
-export default config;
+// Export the config object using CommonJS
+module.exports = config;

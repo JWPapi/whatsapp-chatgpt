@@ -1,21 +1,21 @@
-import qrcode from "qrcode-terminal";
-import { Client, Events, LocalAuth, Message } from "whatsapp-web.js";
+const qrcode = require("qrcode-terminal");
+const { Client, Events, LocalAuth } = require("whatsapp-web.js"); // Removed Message type
 
 // Constants
-import constants from "./constants";
+const constants = require("./constants"); // Assuming constants.js
 
 // CLI
-import * as cli from "./cli/ui";
-import { handleIncomingMessage } from "./handlers/message";
+const cli = require("./cli/ui"); // Assuming ui.js
+const { handleIncomingMessage } = require("./handlers/message"); // Assuming message.js
 
-// Config
-import { initAiConfig } from "./handlers/ai-config";
-import { initOpenAI } from "./providers/openai";
-import { initPerplexity } from "./providers/perplexity";
-import { setupCronJobs } from "./cron";
+// Config & Providers
+const { initAiConfig } = require("./handlers/ai-config"); // Assuming ai-config.js
+const { initOpenAI } = require("./providers/openai"); // Assuming openai.js
+const { initPerplexity } = require("./providers/perplexity"); // Assuming perplexity.js
+const { setupCronJobs } = require("./cron/cron.js"); // Correct path to cron.js
 
 // Ready timestamp of the bot
-let botReadyTimestamp: Date | null = null;
+let botReadyTimestamp = null; // Removed Date | null type
 
 // Entrypoint
 const start = async () => {
@@ -37,8 +37,8 @@ const start = async () => {
 	});
 
 	// WhatsApp auth
-	client.on(Events.QR_RECEIVED, (qr: string) => {
-		qrcode.generate(qr, { small: true }, (qrcode: string) => {
+	client.on(Events.QR_RECEIVED, (qr) => { // Removed : string type
+		qrcode.generate(qr, { small: true }, (qrcode) => { // Removed : string type
 			cli.printQRCode(qrcode);
 		});
 	});
@@ -76,15 +76,18 @@ const start = async () => {
 	});
 
 	// WhatsApp message
-	client.on(Events.MESSAGE_RECEIVED, async (message: any) => {
+	client.on(Events.MESSAGE_RECEIVED, async (message) => { // Removed : any type
 		// Ignore if message is from status broadcast
-		if (message.from == constants.statusBroadcast) return;
+		if (message.from == constants.statusBroadcast) {
+			cli.print(`Ignoring message from status broadcast: ${message.from}`);
+			return;
+		}
 
 		await handleIncomingMessage(message);
 	});
 
 	// Reply to own message
-	client.on(Events.MESSAGE_CREATE, async (message: Message) => {
+	client.on(Events.MESSAGE_CREATE, async (message) => { // Removed : Message type
 		// Ignore if message is from status broadcast
 		if (message.from == constants.statusBroadcast) return;
 
@@ -100,4 +103,5 @@ const start = async () => {
 
 start();
 
-export { botReadyTimestamp };
+// Export using CommonJS
+module.exports = { botReadyTimestamp };

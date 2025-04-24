@@ -1,9 +1,9 @@
-import { intro, spinner, note, outro, text } from "@clack/prompts";
-import color from "picocolors";
+const { intro, spinner, note, outro, text } = require("@clack/prompts");
+const color = require("picocolors");
 
 const s = spinner();
 
-export const print = (text: string) => {
+const print = (text) => { // Removed : string type
 	console.log(color.green("◇") + "  " + text);
 };
 
@@ -15,7 +15,7 @@ export const printIntro = () => {
 	s.start("Starting");
 };
 
-export const printQRCode = (qr: string) => {
+const printQRCode = (qr) => { // Removed : string type
 	s.stop("Client is ready!");
 	note(qr, "Scan the QR code below to login to Whatsapp Web.");
 };
@@ -37,4 +37,15 @@ export const printAuthenticationFailure = () => {
 export const printOutro = () => {
 	s.stop("Loaded!");
 	outro("Whatsapp ChatGPT & DALLE is ready to use.");
+};
+
+// Export all functions using CommonJS
+module.exports = {
+	print,
+	printIntro,
+	printQRCode,
+	printLoading,
+	printAuthenticated,
+	printAuthenticationFailure,
+	printOutro
 };

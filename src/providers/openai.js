@@ -82,3 +82,11 @@ export async function chatCompletion(message, options = {}) {
     throw error;
   }
 }
+
+// Add module.exports at the end
+module.exports = {
+    openai: () => openai, // Export a function to get the initialized instance
+    initOpenAI,
+    transcribeOpenAI,
+    chatCompletion
+};

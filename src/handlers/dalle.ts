@@ -1,12 +1,13 @@
-import { MessageMedia } from "whatsapp-web.js";
-import { openai } from "../providers/openai";
-import config from "../config";
-import * as cli from "../cli/ui";
+const { MessageMedia } = require("whatsapp-web.js");
+// Use the exported getter function for openai instance
+const { openai: getOpenaiInstance } = require("../providers/openai");
+const config = require("../config");
+const cli = require("../cli/ui");
 
-// Moderation
-import { moderateIncomingPrompt } from "./moderation";
+// Moderation - Assuming moderation.js exports this function
+const { moderateIncomingPrompt } = require("./moderation");
 
-const handleMessageDALLE = async (message: any, prompt: any) => {
+const handleMessageDALLE = async (message, prompt) => { // Removed : any types
 	try {
 		const start = Date.now();
 
@@ -22,11 +23,19 @@ const handleMessageDALLE = async (message: any, prompt: any) => {
 			}
 		}
 
+		// Get the initialized OpenAI client instance
+		const openai = getOpenaiInstance();
+		if (!openai) {
+			message.reply("Error: OpenAI client is not initialized.");
+			console.error("[DALL-E] OpenAI client not initialized.");
+			return;
+		}
+
 		// Send the prompt to the API
 		const response = await openai.images.generate({
-			model: "dall-e-3",
+			model: "dall-e-3", // Consider making this configurable
 			prompt: prompt,
-			n: 1,
+			n: 1, // DALL-E 3 only supports n=1
 			size: '1024x1792',
 			response_format: "b64_json"
 		});
@@ -46,4 +55,4 @@ const handleMessageDALLE = async (message: any, prompt: any) => {
 	}
 };
 
-export { handleMessageDALLE };
+module.exports = { handleMessageDALLE };

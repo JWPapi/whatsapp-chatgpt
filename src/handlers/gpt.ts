@@ -1,16 +1,16 @@
-import {randomUUID} from "crypto";
-import {Message} from "whatsapp-web.js";
-import * as cli from "../cli/ui";
-import config from "../config";
-import {chatCompletion} from "../providers/openai";
+const { randomUUID } = require("crypto");
+// const { Message } = require("whatsapp-web.js"); // Message type often not needed in JS
+const cli = require("../cli/ui");
+const config = require("../config");
+const { chatCompletion } = require("../providers/openai");
 
-// Moderation
-import {moderateIncomingPrompt} from "./moderation";
+// Moderation - Assuming moderation.js exports this function
+const { moderateIncomingPrompt } = require("./moderation");
 
 // Mapping from number to last conversation id
-const conversations = {};
+const conversations = {}; // Simple in-memory store, might need persistence
 
-const handleMessageGPT = async (message: Message, prompt: string) => {
+const handleMessageGPT = async (message, prompt) => { // Removed : Message, : string types
     try {
         // Get last conversation
         const lastConversationId = conversations[message.from];
@@ -21,10 +21,10 @@ const handleMessageGPT = async (message: Message, prompt: string) => {
         const start = Date.now();
 
         // Check if we have a conversation with the user
-        let response: string;
+        let response; // Removed : string type
         if (lastConversationId) {
-            // Handle message with previous conversation
-            response = await chatCompletion(prompt)
+            // TODO: Pass conversation context if chatCompletion supports it
+            response = await chatCompletion(prompt);
         } else {
             // Create new conversation
             const convId = randomUUID();
@@ -34,8 +34,8 @@ const handleMessageGPT = async (message: Message, prompt: string) => {
 
             cli.print(`[GPT] New conversation for ${message.from} (ID: ${convId})`);
 
-            // Handle message with new conversation
-            response = await chatCompletion(prompt)
+            // TODO: Pass conversation context if chatCompletion supports it
+            response = await chatCompletion(prompt);
         }
 
         const end = Date.now() - start;
@@ -50,5 +50,4 @@ const handleMessageGPT = async (message: Message, prompt: string) => {
     }
 };
 
-
-export {handleMessageGPT};
+module.exports = { handleMessageGPT };

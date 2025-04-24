@@ -1,14 +1,9 @@
-interface IConstants {
-	// WhatsApp status broadcast
-	statusBroadcast: string;
+// Removed IConstants interface
 
-	// WhatsApp session storage
-	sessionPath: string;
-}
-
-const constants: IConstants = {
+const constants = { // Removed : IConstants type
 	statusBroadcast: "status@broadcast",
 	sessionPath: "./"
 };
 
-export default constants;
+// Changed export syntax
+module.exports = constants;

@@ -1,9 +1,8 @@
-import {Message} from "whatsapp-web.js";
-import * as cli from "../cli/ui";
+// const { Message } = require("whatsapp-web.js"); // Message type often not needed in JS
+const cli = require("../cli/ui");
+const { Client } = require("@notionhq/client");
 
-const {Client} = require("@notionhq/client")
-
-const handleMessageNotion = async (message: Message, prompt: string) => {
+const handleMessageNotion = async (message, prompt) => { // Removed : Message, : string types
     try {
 
         cli.print(`[Notion] Received prompt from ${message.from}: ${prompt}`);
@@ -26,9 +25,9 @@ const handleMessageNotion = async (message: Message, prompt: string) => {
         console.error("An error occured", error);
         await message.reply("An error occured, please contact the administrator. (" + error.message + ")");
     }
-}
+};
 
-const generateDBEntry = (prompt: string, database: string) => {
+const generateDBEntry = (prompt, database) => { // Removed : string types
     return {
         parent: {
             type: 'database_id',
@@ -53,10 +52,10 @@ const addEntryToDB = async (prompt: string, database: string, client: Object) =>
     const dbEntry = generateDBEntry(prompt, database)
     const response = await client.pages.create(dbEntry)
     cli.print(`[Notion] Response: ${JSON.stringify(response)}`);
-    return
-}
+    return;
+};
 
-const getEntriesFromDB = async (database: string, client: Object) => {
+const getEntriesFromDB = async (database, client) => { // Removed : string, : Object types
     const response = await client.databases.query({
         database_id: database,
         filter: {
@@ -77,10 +76,10 @@ const getEntriesFromDB = async (database: string, client: Object) => {
                 }]
         }
     })
-    return response.results.map((page) => page.properties.Name.title[0].plain_text)
-}
+    return response.results.map((page) => page.properties.Name.title[0].plain_text);
+};
 
-const getUserInfo = (prompt: string, message: Message) => {
+const getUserInfo = (prompt, message) => { // Removed : string, : Message types
     const jwDatabaseId = 'b430559a3ced44c1bf2b5db8285853c1'
     const kdDatabaseId = 'c13d709df5124795bd977dd019c7bde5'
     prompt = prompt.toLowerCase()
@@ -92,5 +91,4 @@ const getUserInfo = (prompt: string, message: Message) => {
     return {db: jwDatabaseId, name: "Julian"}
 }
 
-
-export {handleMessageNotion};
+module.exports = { handleMessageNotion };

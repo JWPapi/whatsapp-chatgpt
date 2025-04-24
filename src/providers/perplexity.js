@@ -9,6 +9,12 @@ export function initPerplexity() {
             baseURL: 'https://api.perplexity.ai',
         }
     );
+    console.log("[Perplexity] Perplexity AI client initialized.");
 }
 
+// Add module.exports at the end
+module.exports = {
+    perplexity: () => perplexity, // Export a function to get the initialized instance
+    initPerplexity
+};
 
