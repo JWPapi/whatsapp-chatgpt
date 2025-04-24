@@ -1,12 +1,12 @@
 // const { Message } = require("whatsapp-web.js"); // Message type often not needed in JS
 // Use the exported getter function for perplexity instance
-const { perplexity: getPerplexityInstance } = require("../providers/perplexity");
-const cli = require("../cli/ui");
+import { perplexity as getPerplexityInstance } from "../providers/perplexity.js";
+import * as cli from "../cli/ui.js";
 
 // Mapping from number to last conversation id (if needed for research context)
 // const conversations = {};
 
-const handleMessageResearch = async (message, prompt) => { // Removed : Message, : string types
+export const handleMessageResearch = async (message, prompt) => { // Removed : Message, : string types, added export
     try {
         const perplexity = getPerplexityInstance();
         if (!perplexity) {
@@ -42,4 +42,4 @@ const handleMessageResearch = async (message, prompt) => { // Removed : Message,
     }
 };
 
-module.exports = { handleMessageResearch };
+// Removed module.exports as handleMessageResearch is now exported directly
