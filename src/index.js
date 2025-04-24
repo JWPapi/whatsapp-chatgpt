@@ -100,17 +100,34 @@ const start = async () => {
 
 start()
 
-// Graceful shutdown on Ctrl+C
+// Graceful shutdown on Ctrl+C with timeout
 process.on('SIGINT', async () => {
-  console.log('\n[Process] SIGINT received. Shutting down gracefully...')
-  try {
-    await client.destroy()
-    console.log('[Client] WhatsApp client destroyed.')
-  } catch (error) {
-    console.error('[Client] Error destroying client:', error)
-  } finally {
-    process.exit(0)
+  console.log('\n[Process] SIGINT received. Attempting graceful shutdown...')
+
+  const shutdownTimeout = 5000; // 5 seconds
+
+  const destroyPromise = client.destroy().then(() => {
+    console.log('[Client] WhatsApp client destroyed successfully.');
+    return 'destroyed';
+  }).catch(error => {
+    console.error('[Client] Error destroying client:', error);
+    return 'error';
+  });
+
+  const timeoutPromise = new Promise(resolve => setTimeout(() => resolve('timeout'), shutdownTimeout));
+
+  // Race destroy against timeout
+  const result = await Promise.race([destroyPromise, timeoutPromise]);
+
+  if (result === 'timeout') {
+    console.warn(`[Process] Client destroy timed out after ${shutdownTimeout}ms. Forcing exit.`);
+  } else if (result === 'error') {
+    console.log('[Process] Exiting after client destroy error.');
+  } else {
+    console.log('[Process] Exiting after successful client destroy.');
   }
+
+  process.exit(0); // Force exit in all cases after attempting destroy/timeout
 })
 
 export { botReadyTimestamp }
