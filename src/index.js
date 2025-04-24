@@ -6,7 +6,6 @@ import constants from './constants.js'
 import * as cli from './cli/ui.js'
 import { handleIncomingMessage } from './handlers/message.js'
 
-import { initAiConfig } from './handlers/ai-config.js'
 import { initOpenAI } from './providers/openai.js'
 import { initPerplexity } from './providers/perplexity.js'
 import { setupCronJobs } from './cron/cron.js'
@@ -73,7 +72,6 @@ const start = async () => {
 
     setupCronJobs(client)
 
-    initAiConfig()
     initOpenAI()
     initPerplexity()
   })
