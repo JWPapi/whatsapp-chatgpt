@@ -11,10 +11,7 @@ const config = require("../config"); // Assuming config.js
 
 // Default config structure (adjust based on actual usage)
 let aiConfig = { // Removed : IAiConfig type
-	dalle: {
-		// size: dalleImageSize["512x512"] // Removed enum reference, use string directly or get from config
-		size: "512x512" // Example: Default size as string
-	},
+	// dalle config removed
 	// chatgpt: {}, // Add structure if needed
 	commandsMap: {}
 };

@@ -10,7 +10,7 @@ import * as cli from "../cli/ui.js"; // ui.js uses named exports
 
 // Handlers & Providers
 import { handleMessageGPT } from "./gpt.js"; // Assuming gpt.js will use named export
-import { handleMessageDALLE } from "./dalle.js"; // Assuming dalle.js will use named export
+// DALL-E handler removed
 import { getConfig } from "./ai-config.js"; // Assuming ai-config.js will use named export
 import { transcribeOpenAI } from "../providers/openai.js"; // Assuming openai.js will use named export
 import { handleMessageNotion } from "./notion.js"; // Assuming notion.js will use named export
@@ -122,13 +122,6 @@ async function handleIncomingMessage(message) { // Removed : Message type
     if (startsWithIgnoreCase(messageString, config.gptPrefix)) {
         const prompt = messageString.substring(config.gptPrefix.length + 1);
         await handleMessageGPT(message, prompt);
-        return;
-    }
-
-    // DALLE (!dalle <prompt>)
-    if (startsWithIgnoreCase(messageString, config.dallePrefix)) {
-        const prompt = messageString.substring(config.dallePrefix.length + 1);
-        await handleMessageDALLE(message, prompt);
         return;
     }
 

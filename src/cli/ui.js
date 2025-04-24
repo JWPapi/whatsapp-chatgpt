@@ -9,8 +9,8 @@ const print = (text) => {
 };
 
 export const printIntro = () => {
-	intro(color.bgCyan(color.white(" Whatsapp ChatGPT & DALL-E ")));
-	note("A Whatsapp bot that uses OpenAI's ChatGPT and DALL-E to generate text and images from a prompt.");
+	intro(color.bgCyan(color.white(" Whatsapp ChatGPT Bot "))); // Removed DALL-E
+	note("A Whatsapp bot that uses OpenAI's ChatGPT to generate text from a prompt."); // Removed DALL-E
 	s.start("Starting");
 };
 
@@ -36,5 +36,5 @@ export const printAuthenticationFailure = () => {
 
 export const printOutro = () => {
 	s.stop("Loaded!");
-	outro("Whatsapp ChatGPT & DALLE is ready to use.");
+	outro("Whatsapp ChatGPT Bot is ready to use."); // Removed DALL-E
 };
