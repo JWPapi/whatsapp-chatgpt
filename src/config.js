@@ -1,10 +1,10 @@
-const process = require("process");
+import process from "process";
 
-// Require the JS version of TranscriptionMode
-const { TranscriptionMode } = require("./types/transcription-mode");
+// Import the JS version of TranscriptionMode
+import { TranscriptionMode } from "./types/transcription-mode.js"; // Added .js extension
 
 // Environment variables
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
 dotenv.config();
 
 
@@ -84,5 +84,5 @@ function getEnvPromptModerationBlacklistedCategories() { // Removed TS return ty
 	}
 }
 
-// Export the config object using CommonJS
-module.exports = config;
+// Export the config object using ESM default export
+export default config;
