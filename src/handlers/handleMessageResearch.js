@@ -36,7 +36,7 @@ const handleMessageResearch = async (message, prompt) => { // Removed : Message,
 
         message.reply(conv.choices[0].message.content);
 
-    } catch (error: any) {
+    } catch (error) {
         console.error("An error occured", error);
         message.reply("An error occured, please contact the administrator. (" + error.message + ")");
     }

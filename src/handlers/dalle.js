@@ -43,13 +43,13 @@ const handleMessageDALLE = async (message, prompt) => { // Removed : any types
 
 		const end = Date.now() - start;
 
-		const base64 = response.data[0].b64_json as string;
+		const base64 = response.data[0].b64_json; // Removed 'as string'
 		const image = new MessageMedia("image/jpeg", base64, "image.jpg");
 
 		cli.print(`[DALL-E] Answer to ${message.from} | OpenAI request took ${end}ms`);
 
 		message.reply(image);
-	} catch (error: any) {
+	} catch (error) {
 		console.error("An error occured", error);
 		message.reply("An error occured, please contact the administrator. (" + error.message + ")");
 	}

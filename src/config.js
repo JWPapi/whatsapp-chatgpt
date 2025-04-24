@@ -7,44 +7,9 @@ const { TranscriptionMode } = require("./types/transcription-mode");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// Config Interface
-interface;
-IConfig;
-{
-	// Access control
-	whitelistedPhoneNumbers: string[];
-	whitelistedEnabled: boolean;
-	// OpenAI
-	openAIModel: string;
-	openAIAPIKeys: string[];
-	maxModelTokens: number;
-	prePrompt: string | undefined;
-
-	// Prefix
-	prefixEnabled: boolean;
-	prefixSkippedForMe: boolean;
-	gptPrefix: string;
-	dallePrefix: string;
-	langChainPrefix: string;
-	resetPrefix: string;
-
-	// Groupchats
-	groupchatsEnabled: boolean;
-
-	// Prompt Moderation
-	promptModerationEnabled: boolean;
-	promptModerationBlacklistedCategories: string[];
-
-	// Voice transcription & Text-to-Speech
-	transcriptionMode: TranscriptionMode;
-	transcriptionLanguage: string;
-
-}
-
-// Removed IConfig interface
 
 // Config
-const config = { // Removed : IConfig type and export const
+const config = {
 	whitelistedPhoneNumbers: process.env.WHITELISTED_PHONE_NUMBERS?.split(",") || [],
 	whitelistedEnabled: getEnvBooleanWithDefault("WHITELISTED_ENABLED", false),
 
@@ -108,9 +73,9 @@ function getEnvBooleanWithDefault(key, defaultValue) { // Removed : string, : bo
 
 /**
  * Get the blacklist categories for prompt moderation from the environment variable
- * @returns Blacklisted categories for prompt moderation
+ * @returns {string[]} Blacklisted categories for prompt moderation
  */
-function getEnvPromptModerationBlacklistedCategories(): string[] {
+function getEnvPromptModerationBlacklistedCategories() { // Removed TS return type
 	const envValue = process.env.PROMPT_MODERATION_BLACKLISTED_CATEGORIES;
 	if (envValue == undefined || envValue == "") {
 		return ["hate", "hate/threatening", "self-harm", "sexual", "sexual/minors", "violence", "violence/graphic"];

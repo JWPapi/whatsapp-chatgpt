@@ -44,7 +44,7 @@ const handleMessageGPT = async (message, prompt) => { // Removed : Message, : st
 
         // Default: Text reply
         message.reply(response);
-    } catch (error: any) {
+    } catch (error) {
         console.error("An error occured", error);
         message.reply("An error occured, please contact the administrator. (" + error.message + ")");
     }

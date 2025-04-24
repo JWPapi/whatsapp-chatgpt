@@ -21,7 +21,7 @@ const handleMessageNotion = async (message, prompt) => { // Removed : Message, :
         await addEntryToDB(prompt, user.db, notion)
         await message.reply(`Added to ${user.name} To Do: ${prompt}`)
 
-    } catch (error: any) {
+    } catch (error) {
         console.error("An error occured", error);
         await message.reply("An error occured, please contact the administrator. (" + error.message + ")");
     }
