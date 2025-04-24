@@ -1,26 +1,23 @@
-const { Message } = require("whatsapp-web.js"); // Assuming Message is needed, otherwise remove
-const { startsWithIgnoreCase } = require("../utils"); // Assuming utils.js exports this
+import { Message } from "whatsapp-web.js"; // Assuming Message is needed, otherwise remove
+import { startsWithIgnoreCase } from "../utils.js"; // Import from ESM utils.js
 
 // Config & Constants
-const config = require("../config"); // Assuming config.js exports default or config object
-const constants = require("../constants"); // Assuming constants.js exports the constants object
+import config from "../config.js"; // Assuming config.js will use default export
+import constants from "../constants.js"; // Assuming constants.js will use default export
 
 // CLI
-const cli = require("../cli/ui"); // Assuming ui.js exports functions
+import * as cli from "../cli/ui.js"; // ui.js uses named exports
 
 // Handlers & Providers
-const { handleMessageGPT } = require("./gpt"); // Assuming gpt.js exports this
-const { handleMessageDALLE } = require("./dalle"); // Assuming dalle.js exports this
-const { getConfig } = require("./ai-config"); // Assuming ai-config.js exports this
-const { transcribeOpenAI } = require("../providers/openai"); // Assuming openai.js exports this
-const { handleMessageNotion } = require("./notion"); // Assuming notion.js exports this
-const { handleMessageResearch } = require("./handleMessageResearch"); // Assuming handleMessageResearch.js exports this
+import { handleMessageGPT } from "./gpt.js"; // Assuming gpt.js will use named export
+import { handleMessageDALLE } from "./dalle.js"; // Assuming dalle.js will use named export
+import { getConfig } from "./ai-config.js"; // Assuming ai-config.js will use named export
+import { transcribeOpenAI } from "../providers/openai.js"; // Assuming openai.js will use named export
+import { handleMessageNotion } from "./notion.js"; // Assuming notion.js will use named export
+import { handleMessageResearch } from "./handleMessageResearch.js"; // Assuming handleMessageResearch.js will use named export
 
 // For deciding to ignore old messages
-// Note: botReadyTimestamp is tricky to import directly due to circular dependencies potential
-// It's better if index.js passes this state down or uses an event emitter/shared state module.
-// For now, we'll require index.js, but this might need refactoring.
-const { botReadyTimestamp } = require("../index");
+import { botReadyTimestamp } from "../index.js"; // Import from ESM index.js
 
 const TODO_KEYWORDS = ['todo', 'to do', 'to-do'];
 
@@ -155,4 +152,4 @@ async function handleIncomingMessage(message) { // Removed : Message type
 
 }
 
-module.exports = { handleIncomingMessage };
+export { handleIncomingMessage };
