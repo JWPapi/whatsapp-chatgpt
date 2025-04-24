@@ -1,38 +1,38 @@
 {
-	"name": "whatsapp-chatgpt",
-	"version": "1.0.0",
-	"description": "Whatsapp bot that uses OpenAI's GPT & DALLE to respond to user inputs",
-	"main": "src/index.ts",
-	"author": "Askrella Software Agency UG (haftungsbeschränkt)",
-	"scripts": {
-		"start": "npx vite-node src/index.js",
-		"dev": "npx vite-node src/index.js",
-		"send": "git add . && git commit -m \"Update\" && git push origin master",
-		"prettier": "prettier --write ."
-	},
-	"license": "MIT",
-	"dependencies": {
-		"@clack/prompts": "^0.6.3",
-		"@notionhq/client": "^2.2.4",
-		"aws-sdk": "^2.1332.0",
-		"chatgpt-official": "^1.1.9",
-		"dotenv": "^16.0.3",
-		"fetch-blob": "^3.2.0",
-		"ffmpeg": "^0.0.4",
-		"langchain": "0.0.62",
-		"node-cron": "^3.0.3",
-		"openai": "^4.53.0",
-		"picocolors": "^1.0.0",
-		"qrcode-terminal": "github:artradeapp/qrcode-terminal",
-		"vite-node": "^0.31.1",
-		"whatsapp-web.js": "^1.26.0"
-	},
-	"devDependencies": {
-		"@types/fluent-ffmpeg": "^2.1.21",
-		"@types/qrcode-terminal": "^0.12.0",
-		"prettier": "^2.8.8"
-	},
-	"engines": {
-		"node": "18.15.0"
-	}
+  "name": "whatsapp-chatgpt",
+  "version": "1.0.0",
+  "description": "Whatsapp bot that uses OpenAI's GPT & DALLE to respond to user inputs",
+  "main": "src/index.ts",
+  "author": "Askrella Software Agency UG (haftungsbeschränkt)",
+  "scripts": {
+    "start": "npx vite-node src/index.js",
+    "dev": "npx vite-node src/index.js",
+    "send": "git add . && git commit -m \"Update\" && git push origin master",
+    "prettier": "prettier --write ."
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.6.3",
+    "@notionhq/client": "^2.2.4",
+    "aws-sdk": "^2.1332.0",
+    "chatgpt-official": "^1.1.9",
+    "dotenv": "^16.0.3",
+    "fetch-blob": "^3.2.0",
+    "ffmpeg": "^0.0.4",
+    "langchain": "0.0.62",
+    "node-cron": "^3.0.3",
+    "openai": "^4.53.0",
+    "picocolors": "^1.0.0",
+    "qrcode-terminal": "github:artradeapp/qrcode-terminal",
+    "vite-node": "^0.31.1",
+    "whatsapp-web.js": "^1.26.0"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.21",
+    "@types/qrcode-terminal": "^0.12.0",
+    "prettier": "^2.8.8"
+  },
+  "engines": {
+    "node": "18.15.0"
+  }
 }
