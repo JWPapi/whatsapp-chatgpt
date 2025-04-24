@@ -1,18 +1,18 @@
-const qrcode = require("qrcode-terminal");
-const { Client, Events, LocalAuth } = require("whatsapp-web.js"); // Removed Message type
+import qrcode from "qrcode-terminal";
+import { Client, Events, LocalAuth } from "whatsapp-web.js"; // Removed Message type
 
 // Constants
-const constants = require("./constants"); // Assuming constants.js
+import constants from "./constants.js"; // Assuming constants.js will use default export
 
 // CLI
-const cli = require("./cli/ui"); // Assuming ui.js
-const { handleIncomingMessage } = require("./handlers/message"); // Assuming message.js
+import * as cli from "./cli/ui.js"; // ui.js uses named exports
+import { handleIncomingMessage } from "./handlers/message.js"; // Assuming message.js will use named export
 
 // Config & Providers
-const { initAiConfig } = require("./handlers/ai-config"); // Assuming ai-config.js
-const { initOpenAI } = require("./providers/openai"); // Assuming openai.js
-const { initPerplexity } = require("./providers/perplexity"); // Assuming perplexity.js
-const { setupCronJobs } = require("./cron/cron.js"); // Correct path to cron.js
+import { initAiConfig } from "./handlers/ai-config.js"; // Assuming ai-config.js will use named export
+import { initOpenAI } from "./providers/openai.js"; // Assuming openai.js will use named export
+import { initPerplexity } from "./providers/perplexity.js"; // Assuming perplexity.js will use named export
+import { setupCronJobs } from "./cron/cron.js"; // Assuming cron.js will use named export
 
 // Ready timestamp of the bot
 let botReadyTimestamp = null; // Removed Date | null type
@@ -103,5 +103,5 @@ const start = async () => {
 
 start();
 
-// Export using CommonJS
-module.exports = { botReadyTimestamp };
+// Export using ESM named export
+export { botReadyTimestamp };
