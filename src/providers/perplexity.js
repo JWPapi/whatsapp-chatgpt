@@ -1,7 +1,7 @@
-import OpenAi from 'openai'
+import OpenAi from 'openai'; // Kept 'OpenAi' as per original, ensure this is correct package/export name
 
 
-export let perplexity
+export let perplexity; // Added semicolon
 
 export function initPerplexity() {
     perplexity = new OpenAi({
@@ -12,9 +12,9 @@ export function initPerplexity() {
     console.log("[Perplexity] Perplexity AI client initialized.");
 }
 
-// Add module.exports at the end
-module.exports = {
-    perplexity: () => perplexity, // Export a function to get the initialized instance
+// Use named ESM exports
+export {
+    perplexity, // Export the instance directly
     initPerplexity
 };
 
