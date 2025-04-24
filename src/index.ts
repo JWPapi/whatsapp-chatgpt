@@ -1,5 +1,5 @@
 import qrcode from "qrcode-terminal";
-import { Client, Message, Events, LocalAuth } from "whatsapp-web.js";
+import { Client, Events, LocalAuth, Message } from "whatsapp-web.js";
 
 // Constants
 import constants from "./constants";
@@ -12,6 +12,7 @@ import { handleIncomingMessage } from "./handlers/message";
 import { initAiConfig } from "./handlers/ai-config";
 import { initOpenAI } from "./providers/openai";
 import { initPerplexity } from "./providers/perplexity";
+import { setupCronJobs } from "./cron";
 
 // Ready timestamp of the bot
 let botReadyTimestamp: Date | null = null;
@@ -27,13 +28,13 @@ const start = async () => {
 			args: ["--no-sandbox"]
 		},
 		authStrategy: new LocalAuth({
-			dataPath: '/var/data'
+			dataPath: process.env.ENVIRONMENT === "development" ? "./wweb_auth_data" : "/var/data"
 		}),
 		webVersionCache: {
 			type: "remote",
 			remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`
 		}
-	})
+	});
 
 	// WhatsApp auth
 	client.on(Events.QR_RECEIVED, (qr: string) => {
@@ -66,6 +67,8 @@ const start = async () => {
 
 		// Set bot ready timestamp
 		botReadyTimestamp = new Date();
+
+		setupCronJobs(client);
 
 		initAiConfig();
 		initOpenAI();
