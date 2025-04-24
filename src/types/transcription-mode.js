@@ -6,5 +6,5 @@ const TranscriptionMode = {
 	OpenAI: "openai"
 };
 
-// Export using CommonJS
-module.exports = { TranscriptionMode };
+// Export using named ESM export
+export { TranscriptionMode };
