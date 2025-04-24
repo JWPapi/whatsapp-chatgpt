@@ -13,10 +13,25 @@ import { setupCronJobs } from './cron/cron.js'
 
 let botReadyTimestamp = null
 
+// Initialize client outside the start function to make it accessible to the signal handler
+const client = new Client({
+  puppeteer: {
+    args: ['--no-sandbox'],
+  },
+  authStrategy: new LocalAuth({
+    dataPath: process.env.ENVIRONMENT === 'development' ? './wweb_auth_data' : '/var/data',
+  }),
+  webVersionCache: {
+    type: 'remote',
+    remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${process.env.WWEB_VERSION || '2.2412.54'}.html`, // Use env var or default
+  },
+})
+
 const start = async () => {
-  const wwebVersion = '2.2412.54'
   cli.printIntro()
 
+  // Client initialization moved outside
+  /*
   const client = new Client({
     puppeteer: {
       args: ['--no-sandbox'],
@@ -26,9 +41,10 @@ const start = async () => {
     }),
     webVersionCache: {
       type: 'remote',
-      remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
+      remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${process.env.WWEB_VERSION || '2.2412.54'}.html`,
     },
   })
+  */ // End of moved client initialization block
 
   client.on(Events.QR_RECEIVED, qr => {
     qrcode.generate(qr, { small: true }, qrcode => {
@@ -83,5 +99,18 @@ const start = async () => {
 }
 
 start()
+
+// Graceful shutdown on Ctrl+C
+process.on('SIGINT', async () => {
+  console.log('\n[Process] SIGINT received. Shutting down gracefully...')
+  try {
+    await client.destroy()
+    console.log('[Client] WhatsApp client destroyed.')
+  } catch (error) {
+    console.error('[Client] Error destroying client:', error)
+  } finally {
+    process.exit(0)
+  }
+})
 
 export { botReadyTimestamp }
