@@ -5,49 +5,48 @@ const config = require("../config");
 const { chatCompletion } = require("../providers/openai");
 
 // Moderation - Assuming moderation.js exports this function
-const { moderateIncomingPrompt } = require("./moderation");
 
 // Mapping from number to last conversation id
 const conversations = {}; // Simple in-memory store, might need persistence
 
-const handleMessageGPT = async (message, prompt) => { // Removed : Message, : string types
-    try {
-        // Get last conversation
-        const lastConversationId = conversations[message.from];
+const handleMessageGPT = async (message, prompt) => {
+	// Removed : Message, : string types
+	try {
+		// Get last conversation
+		const lastConversationId = conversations[message.from];
 
-        cli.print(`[GPT] Received prompt from ${message.from}: ${prompt}`);
+		cli.print(`[GPT] Received prompt from ${message.from}: ${prompt}`);
 
+		const start = Date.now();
 
-        const start = Date.now();
+		// Check if we have a conversation with the user
+		let response; // Removed : string type
+		if (lastConversationId) {
+			// TODO: Pass conversation context if chatCompletion supports it
+			response = await chatCompletion(prompt);
+		} else {
+			// Create new conversation
+			const convId = randomUUID();
 
-        // Check if we have a conversation with the user
-        let response; // Removed : string type
-        if (lastConversationId) {
-            // TODO: Pass conversation context if chatCompletion supports it
-            response = await chatCompletion(prompt);
-        } else {
-            // Create new conversation
-            const convId = randomUUID();
+			// Set conversation
+			conversations[message.from] = convId;
 
-            // Set conversation
-            conversations[message.from] = convId;
+			cli.print(`[GPT] New conversation for ${message.from} (ID: ${convId})`);
 
-            cli.print(`[GPT] New conversation for ${message.from} (ID: ${convId})`);
+			// TODO: Pass conversation context if chatCompletion supports it
+			response = await chatCompletion(prompt);
+		}
 
-            // TODO: Pass conversation context if chatCompletion supports it
-            response = await chatCompletion(prompt);
-        }
+		const end = Date.now() - start;
 
-        const end = Date.now() - start;
+		cli.print(`[GPT] Answer to ${message.from}: ${response}  | OpenAI request took ${end}ms)`);
 
-        cli.print(`[GPT] Answer to ${message.from}: ${response}  | OpenAI request took ${end}ms)`);
-
-        // Default: Text reply
-        message.reply(response);
-    } catch (error) {
-        console.error("An error occured", error);
-        message.reply("An error occured, please contact the administrator. (" + error.message + ")");
-    }
+		// Default: Text reply
+		message.reply(response);
+	} catch (error) {
+		console.error("An error occured", error);
+		message.reply("An error occured, please contact the administrator. (" + error.message + ")");
+	}
 };
 
 module.exports = { handleMessageGPT };

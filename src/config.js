@@ -1,12 +1,9 @@
 import process from "process";
 
-// Import the JS version of TranscriptionMode
-import { TranscriptionMode } from "./types/transcription-mode.js"; // Added .js extension
-
 // Environment variables
 import dotenv from "dotenv";
-dotenv.config();
 
+dotenv.config();
 
 // Config
 const config = {
@@ -32,14 +29,14 @@ const config = {
 	// Prompt Moderation
 	promptModerationEnabled: getEnvBooleanWithDefault("PROMPT_MODERATION_ENABLED", false), // Default: false
 	promptModerationBlacklistedCategories: getEnvPromptModerationBlacklistedCategories(), // Default: ["hate",
-																						  // "hate/threatening",
-																						  // "self-harm", "sexual",
-																						  // "sexual/minors",
-																						  // "violence",
-																						  // "violence/graphic"],
+	// "hate/threatening",
+	// "self-harm", "sexual",
+	// "sexual/minors",
+	// "violence",
+	// "violence/graphic"],
 
 	// Add transcription related fields explicitly if they were in IConfig
-	transcriptionMode: process.env.TRANSCRIPTION_MODE || TranscriptionMode.OpenAI, // Use the imported JS object
+	transcriptionMode: process.env.TRANSCRIPTION_MODE, // Use the imported JS object
 	transcriptionLanguage: process.env.TRANSCRIPTION_LANGUAGE || "en" // Default language if needed
 };
 
@@ -62,7 +59,8 @@ function getEnvMaxModelTokens() {
  * @param defaultValue The default value
  * @returns The value of the environment variable or the default value
  */
-function getEnvBooleanWithDefault(key, defaultValue) { // Removed : string, : boolean types
+function getEnvBooleanWithDefault(key, defaultValue) {
+	// Removed : string, : boolean types
 	const envValue = process.env[key]?.toLowerCase();
 	if (envValue == undefined || envValue == "") {
 		return defaultValue;
@@ -75,12 +73,13 @@ function getEnvBooleanWithDefault(key, defaultValue) { // Removed : string, : bo
  * Get the blacklist categories for prompt moderation from the environment variable
  * @returns {string[]} Blacklisted categories for prompt moderation
  */
-function getEnvPromptModerationBlacklistedCategories() { // Removed TS return type
+function getEnvPromptModerationBlacklistedCategories() {
+	// Removed TS return type
 	const envValue = process.env.PROMPT_MODERATION_BLACKLISTED_CATEGORIES;
 	if (envValue == undefined || envValue == "") {
 		return ["hate", "hate/threatening", "self-harm", "sexual", "sexual/minors", "violence", "violence/graphic"];
 	} else {
-		return JSON.parse(envValue.replace(/'/g, "\""));
+		return JSON.parse(envValue.replace(/'/g, '"'));
 	}
 }
 

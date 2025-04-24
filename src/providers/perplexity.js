@@ -1,20 +1,17 @@
-import OpenAi from 'openai'; // Kept 'OpenAi' as per original, ensure this is correct package/export name
+import OpenAi from "openai"; // Kept 'OpenAi' as per original, ensure this is correct package/export name
 
+let perplexity; // Added semicolon
 
-export let perplexity; // Added semicolon
-
-export function initPerplexity() {
-    perplexity = new OpenAi({
-            apiKey: process.env.PERPLEXITY_API_KEY,
-            baseURL: 'https://api.perplexity.ai',
-        }
-    );
-    console.log("[Perplexity] Perplexity AI client initialized.");
+function initPerplexity() {
+	perplexity = new OpenAi({
+		apiKey: process.env.PERPLEXITY_API_KEY,
+		baseURL: "https://api.perplexity.ai"
+	});
+	console.log("[Perplexity] Perplexity AI client initialized.");
 }
 
 // Use named ESM exports
 export {
-    perplexity, // Export the instance directly
-    initPerplexity
+	perplexity, // Export the instance directly
+	initPerplexity
 };
-
