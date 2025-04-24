@@ -1,15 +1,15 @@
-const { randomUUID } = require("crypto");
+import { randomUUID } from "crypto";
 // const { Message } = require("whatsapp-web.js"); // Message type often not needed in JS
-const cli = require("../cli/ui");
-const config = require("../config");
-const { chatCompletion } = require("../providers/openai");
+import * as cli from "../cli/ui.js";
+import * as config from "../config.js";
+import { chatCompletion } from "../providers/openai.js";
 
 // Moderation - Assuming moderation.js exports this function
 
 // Mapping from number to last conversation id
 const conversations = {}; // Simple in-memory store, might need persistence
 
-const handleMessageGPT = async (message, prompt) => {
+export const handleMessageGPT = async (message, prompt) => {
 	// Removed : Message, : string types
 	try {
 		// Get last conversation
@@ -48,5 +48,3 @@ const handleMessageGPT = async (message, prompt) => {
 		message.reply("An error occured, please contact the administrator. (" + error.message + ")");
 	}
 };
-
-module.exports = { handleMessageGPT };
