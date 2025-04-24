@@ -3,11 +3,10 @@ const color = require("picocolors");
 
 const s = spinner();
 
-const print = (text) => { // Removed : string type
+const print = (text) => {
+	// Removed : string type
 	console.log(color.green("◇") + "  " + text);
 };
-
-
 
 export const printIntro = () => {
 	intro(color.bgCyan(color.white(" Whatsapp ChatGPT & DALL-E ")));
@@ -15,7 +14,8 @@ export const printIntro = () => {
 	s.start("Starting");
 };
 
-const printQRCode = (qr) => { // Removed : string type
+const printQRCode = (qr) => {
+	// Removed : string type
 	s.stop("Client is ready!");
 	note(qr, "Scan the QR code below to login to Whatsapp Web.");
 };

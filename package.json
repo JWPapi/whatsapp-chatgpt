@@ -5,8 +5,8 @@
 	"main": "src/index.ts",
 	"author": "Askrella Software Agency UG (haftungsbeschränkt)",
 	"scripts": {
-		"start": "npx vite-node src/index.ts",
-		"dev": "npx vite-node src/index.ts",
+		"start": "npx vite-node src/index.js",
+		"dev": "npx vite-node src/index.js",
 		"send": "git add . && git commit -m \"Update\" && git push origin master",
 		"prettier": "prettier --write ."
 	},
@@ -20,6 +20,7 @@
 		"fetch-blob": "^3.2.0",
 		"ffmpeg": "^0.0.4",
 		"langchain": "0.0.62",
+		"node-cron": "^3.0.3",
 		"openai": "^4.53.0",
 		"picocolors": "^1.0.0",
 		"qrcode-terminal": "github:artradeapp/qrcode-terminal",

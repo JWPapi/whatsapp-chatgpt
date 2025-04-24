@@ -8,10 +8,12 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // Config Interface
-interface IConfig {
+interface;
+IConfig;
+{
 	// Access control
 	whitelistedPhoneNumbers: string[];
-    whitelistedEnabled: boolean;
+	whitelistedEnabled: boolean;
 	// OpenAI
 	openAIModel: string;
 	openAIAPIKeys: string[];
@@ -44,8 +46,7 @@ interface IConfig {
 // Config
 const config = { // Removed : IConfig type and export const
 	whitelistedPhoneNumbers: process.env.WHITELISTED_PHONE_NUMBERS?.split(",") || [],
-    whitelistedEnabled: getEnvBooleanWithDefault("WHITELISTED_ENABLED", false),
-
+	whitelistedEnabled: getEnvBooleanWithDefault("WHITELISTED_ENABLED", false),
 
 	openAIAPIKeys: (process.env.OPENAI_API_KEYS || process.env.OPENAI_API_KEY || "").split(",").filter((key) => !!key), // Default: []
 	openAIModel: "gpt-4o",
@@ -65,11 +66,16 @@ const config = { // Removed : IConfig type and export const
 
 	// Prompt Moderation
 	promptModerationEnabled: getEnvBooleanWithDefault("PROMPT_MODERATION_ENABLED", false), // Default: false
-	promptModerationBlacklistedCategories: getEnvPromptModerationBlacklistedCategories(), // Default: ["hate", "hate/threatening", "self-harm", "sexual", "sexual/minors", "violence", "violence/graphic"],
+	promptModerationBlacklistedCategories: getEnvPromptModerationBlacklistedCategories(), // Default: ["hate",
+																						  // "hate/threatening",
+																						  // "self-harm", "sexual",
+																						  // "sexual/minors",
+																						  // "violence",
+																						  // "violence/graphic"],
 
 	// Add transcription related fields explicitly if they were in IConfig
 	transcriptionMode: process.env.TRANSCRIPTION_MODE || TranscriptionMode.OpenAI, // Use the imported JS object
-	transcriptionLanguage: process.env.TRANSCRIPTION_LANGUAGE || "en", // Default language if needed
+	transcriptionLanguage: process.env.TRANSCRIPTION_LANGUAGE || "en" // Default language if needed
 };
 
 /**
@@ -109,7 +115,7 @@ function getEnvPromptModerationBlacklistedCategories(): string[] {
 	if (envValue == undefined || envValue == "") {
 		return ["hate", "hate/threatening", "self-harm", "sexual", "sexual/minors", "violence", "violence/graphic"];
 	} else {
-		return JSON.parse(envValue.replace(/'/g, '"'));
+		return JSON.parse(envValue.replace(/'/g, "\""));
 	}
 }
 
