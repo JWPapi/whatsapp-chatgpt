@@ -2,7 +2,8 @@
   "name": "whatsapp-chatgpt",
   "version": "1.0.0",
   "description": "Whatsapp bot that uses OpenAI's GPT & DALLE to respond to user inputs",
-  "main": "src/index.ts",
+  "main": "src/index.js",
+  "type": "module",
   "author": "Askrella Software Agency UG (haftungsbeschränkt)",
   "scripts": {
     "start": "npx vite-node src/index.js",

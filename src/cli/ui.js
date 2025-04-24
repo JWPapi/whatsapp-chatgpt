@@ -1,5 +1,5 @@
-const { intro, spinner, note, outro, text } = require("@clack/prompts");
-const color = require("picocolors");
+import { intro, spinner, note, outro, text } from "@clack/prompts";
+import color from "picocolors";
 
 const s = spinner();
 
@@ -37,15 +37,4 @@ export const printAuthenticationFailure = () => {
 export const printOutro = () => {
 	s.stop("Loaded!");
 	outro("Whatsapp ChatGPT & DALLE is ready to use.");
-};
-
-// Export all functions using CommonJS
-module.exports = {
-	print,
-	printIntro,
-	printQRCode,
-	printLoading,
-	printAuthenticated,
-	printAuthenticationFailure,
-	printOutro
 };
