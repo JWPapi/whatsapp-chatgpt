@@ -6,4 +6,4 @@ const startsWithIgnoreCase = (str, prefix) => {
     return str.toLowerCase().startsWith(prefix.toLowerCase());
 };
 
-module.exports = { startsWithIgnoreCase };
+export { startsWithIgnoreCase };
