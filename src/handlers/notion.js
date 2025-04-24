@@ -1,8 +1,8 @@
 // const { Message } = require("whatsapp-web.js"); // Message type often not needed in JS
-const cli = require("../cli/ui");
-const { Client } = require("@notionhq/client");
+import * as cli from "../cli/ui.js";
+import { Client } from "@notionhq/client";
 
-const handleMessageNotion = async (message, prompt) => { // Removed : Message, : string types
+export const handleMessageNotion = async (message, prompt) => { // Removed : Message, : string types, added export
     try {
 
         cli.print(`[Notion] Received prompt from ${message.from}: ${prompt}`);
@@ -91,4 +91,4 @@ const getUserInfo = (prompt, message) => { // Removed : string, : Message types
     return {db: jwDatabaseId, name: "Julian"}
 }
 
-module.exports = { handleMessageNotion };
+// Removed module.exports as handleMessageNotion is now exported directly
