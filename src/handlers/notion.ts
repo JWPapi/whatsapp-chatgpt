@@ -45,9 +45,9 @@ const generateDBEntry = (prompt, database) => { // Removed : string types
             }
         }
     }
-}
+}; // Added semicolon for consistency
 
-const addEntryToDB = async (prompt: string, database: string, client: Object) => {
+const addEntryToDB = async (prompt, database, client) => { // Removed : string, : string, : Object types
     prompt = prompt.replace("julian", "").replace("kambiz", "")
     const dbEntry = generateDBEntry(prompt, database)
     const response = await client.pages.create(dbEntry)
