@@ -13,7 +13,7 @@ export const printIntro = () => {
 	s.start("Starting");
 };
 
-const printQRCode = (qr) => {
+export const printQRCode = (qr) => {
 	// Removed : string type
 	s.stop("Client is ready!");
 	note(qr, "Scan the QR code below to login to Whatsapp Web.");
