@@ -1,142 +1,127 @@
-import { startsWithIgnoreCase } from "../utils.js"; // Import from ESM utils.js
-// Config & Constants
-import config from "../config.js"; // Assuming config.js will use default export
-// CLI
-import * as cli from "../cli/ui.js"; // ui.js uses named exports
-// Handlers & Providers
-import { handleMessageGPT } from "./gpt.js"; // Assuming gpt.js will use named export
-// DALL-E handler removed
-import { transcribeOpenAI } from "../providers/openai.js"; // Assuming openai.js will use named export
-import { handleMessageNotion } from "./notion.js"; // Assuming notion.js will use named export
-import { handleMessageResearch } from "./handleMessageResearch.js"; // Assuming handleMessageResearch.js will use named
-// export
-// For deciding to ignore old messages
-import { botReadyTimestamp } from "../index.js"; // Import from ESM index.js
+import { startsWithIgnoreCase } from '../utils.js'
 
-const TODO_KEYWORDS = ["todo", "to do", "to-do"];
+import config from '../config.js'
 
-// Handles message
+import * as cli from '../cli/ui.js'
+
+import { handleMessageGPT } from './gpt.js'
+
+import { transcribeOpenAI } from '../providers/openai.js'
+import { handleMessageNotion } from './notion.js'
+import { handleMessageResearch } from './handleMessageResearch.js'
+
+import { botReadyTimestamp } from '../index.js'
+
+const TODO_KEYWORDS = ['todo', 'to do', 'to-do']
+
 async function handleIncomingMessage(message) {
-	// Removed : Message type
-	let messageString = message.body;
+  let messageString = message.body
+  console.log(message)
 
-	if (message.hasQuotedMsg) {
-		let { body } = message;
-		const quotedMessage = message._data.quotedMsg.body;
+  if (message.hasQuotedMsg) {
+    let { body } = message
+    const quotedMessage = message._data.quotedMsg.body
 
-		body = body.toLowerCase().trim();
+    body = body.toLowerCase().trim()
 
-		if (body === "summarize") {
-			const prompt = `Please summare this text: ${quotedMessage}`;
-			await handleMessageGPT(message, prompt);
-			return;
-		}
-		if (body === "action") {
-			const prompt = `Generate list of reasonable-sized action items, based on this message. Don’t overcomplicate stuff. Focus on the important tasks. Rather less than more. Only respond with the list.: ${quotedMessage}`;
-			await handleMessageGPT(message, prompt);
-			return;
-		}
-		if (TODO_KEYWORDS.includes(body)) {
-			await handleMessageNotion(message, quotedMessage);
-			return;
-		}
-	}
+    if (body === 'summarize') {
+      const prompt = `Please summare this text: ${quotedMessage}`
+      await handleMessageGPT(message, prompt)
+      return
+    }
+    if (body === 'action') {
+      const prompt = `Generate list of reasonable-sized action items, based on this message. Don’t overcomplicate stuff. Focus on the important tasks. Rather less than more. Only respond with the list.: ${quotedMessage}`
+      await handleMessageGPT(message, prompt)
+      return
+    }
+    if (TODO_KEYWORDS.includes(body)) {
+      await handleMessageNotion(message, quotedMessage)
+      return
+    }
+  }
 
-	// Prevent handling old messages (moved check higher for efficiency)
-	if (message.timestamp != null && botReadyTimestamp != null) {
-		const messageTimestamp = new Date(message.timestamp * 1000);
-		// Ignore messages that are sent before the bot is started
-		if (messageTimestamp < botReadyTimestamp) {
-			cli.print(`Ignoring old message: ${messageString || "[Media Message]"}`);
-			return;
-		}
-	} else if (botReadyTimestamp == null) {
-		// Bot is not ready yet, ignore message
-		cli.print(`Ignoring message because bot is not ready yet: ${messageString || "[Media Message]"}`);
-		return;
-	}
+  if (message.timestamp != null && botReadyTimestamp != null) {
+    const messageTimestamp = new Date(message.timestamp * 1000)
 
-	// Ignore groupchats if disabled (moved check higher for efficiency)
-	const chat = await message.getChat();
-	if (chat.isGroup && !config.groupchatsEnabled) {
-		cli.print(`Ignoring message from group chat ${chat.name} as group chats are disabled.`);
-		return;
-	}
+    if (messageTimestamp < botReadyTimestamp) {
+      cli.print(`Ignoring old message: ${messageString || '[Media Message]'}`)
+      return
+    }
+  } else if (botReadyTimestamp == null) {
+    cli.print(
+      `Ignoring message because bot is not ready yet: ${messageString || '[Media Message]'}`,
+    )
+    return
+  }
 
-	const selfNotedMessage = message.fromMe && !message.hasQuotedMsg && message.from === message.to;
+  const chat = await message.getChat()
+  if (chat.isGroup && !config.groupchatsEnabled) {
+    cli.print(`Ignoring message from group chat ${chat.name} as group chats are disabled.`)
+    return
+  }
 
-	// Transcribe audio
-	if (message.hasMedia) {
-		const media = await message.downloadMedia();
+  const selfNotedMessage = message.fromMe && !message.hasQuotedMsg && message.from === message.to
 
-		// Ignore non-audio media
-		if (!media || !media.mimetype.startsWith("audio/")) {
-			console.log("non audio media");
-			return;
-		}
+  if (message.hasMedia) {
+    const media = await message.downloadMedia()
 
-		// Check if transcription is enabled (using config directly now)
-		if (config.transcriptionMode === "disabled") {
-			// Assuming 'disabled' is a valid value in TranscriptionMode object
-			cli.print("[Transcription] Received voice message but voice transcription is disabled.");
-			return;
-		}
+    if (!media || !media.mimetype.startsWith('audio/')) {
+      console.log('non audio media')
+      return
+    }
 
-		// Convert media to base64 string
-		const mediaBuffer = Buffer.from(media.data, "base64");
+    if (config.transcriptionMode === 'disabled') {
+      cli.print('[Transcription] Received voice message but voice transcription is disabled.')
+      return
+    }
 
-		// Transcribe using the configured mode (currently hardcoded to openai in the check above)
-		cli.print(`[Transcription] Transcribing audio with "${config.transcriptionMode}" ...`);
+    const mediaBuffer = Buffer.from(media.data, 'base64')
 
-		// Assuming only OpenAI is implemented based on the check above
-		const res = await transcribeOpenAI(mediaBuffer);
+    cli.print(`[Transcription] Transcribing audio with "${config.transcriptionMode}" ...`)
 
-		const { text: transcribedText, language: transcribedLanguage } = res || {}; // Add default empty object for
-		// safety
+    const res = await transcribeOpenAI(mediaBuffer)
 
-		// Check transcription is null or empty (error or silent voice message)
-		if (!transcribedText) {
-			message.reply("I couldn't understand what you said.");
-			return;
-		}
+    const { text: transcribedText, language: transcribedLanguage } = res || {}
 
-		// Log transcription
-		cli.print(`[Transcription] Transcription response: ${transcribedText} (language: ${transcribedLanguage || "unknown"})`);
+    if (!transcribedText) {
+      message.reply("I couldn't understand what you said.")
+      return
+    }
 
-		// Reply with transcription
-		const reply = `${transcribedText}${transcribedLanguage ? ` (language: ${transcribedLanguage})` : ""}`;
-		message.reply(reply);
+    cli.print(
+      `[Transcription] Transcription response: ${transcribedText} (language: ${
+        transcribedLanguage || 'unknown'
+      })`,
+    )
 
-		// Decide if the transcribed text should be processed further (e.g., by GPT)
-		// For now, we just reply and return. Uncomment below to process with GPT.
-		// messageString = transcribedText; // Update messageString to be the transcribed text
-		return; // Stop processing after transcription reply
-	}
+    const reply = `${transcribedText}${
+      transcribedLanguage ? ` (language: ${transcribedLanguage})` : ''
+    }`
+    message.reply(reply)
 
-	// GPT (!gpt <prompt>)
-	if (startsWithIgnoreCase(messageString, config.gptPrefix)) {
-		const prompt = messageString.substring(config.gptPrefix.length + 1);
-		await handleMessageGPT(message, prompt);
-		return;
-	}
+    return
+  }
 
-	// GPT (only <prompt>)
-	if (!config.prefixEnabled || (config.prefixSkippedForMe && selfNotedMessage)) {
-		await handleMessageGPT(message, messageString);
-		return;
-	}
+  if (startsWithIgnoreCase(messageString, config.gptPrefix)) {
+    const prompt = messageString.substring(config.gptPrefix.length + 1)
+    await handleMessageGPT(message, prompt)
+    return
+  }
 
-	// Notion (!notion <prompt>)
-	if (TODO_KEYWORDS.some((keyword) => startsWithIgnoreCase(messageString, keyword))) {
-		const prompt = messageString.substring(5);
-		await handleMessageNotion(message, prompt);
-		return;
-	}
+  if (!config.prefixEnabled || (config.prefixSkippedForMe && selfNotedMessage)) {
+    await handleMessageGPT(message, messageString)
+    return
+  }
 
-	if (startsWithIgnoreCase(messageString, "research")) {
-		await handleMessageResearch(message, messageString);
-		return;
-	}
+  if (TODO_KEYWORDS.some(keyword => startsWithIgnoreCase(messageString, keyword))) {
+    const prompt = messageString.substring(5)
+    await handleMessageNotion(message, prompt)
+    return
+  }
+
+  if (startsWithIgnoreCase(messageString, 'research')) {
+    await handleMessageResearch(message, messageString)
+  }
 }
 
-export { handleIncomingMessage };
+export { handleIncomingMessage }

@@ -3,8 +3,7 @@ import color from "picocolors";
 
 const s = spinner();
 
-const print = (text) => {
-	// Removed : string type
+export const print = (text) => {
 	console.log(color.green("◇") + "  " + text);
 };
 

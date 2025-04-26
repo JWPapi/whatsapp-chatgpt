@@ -22,28 +22,14 @@ const client = new Client({
   }),
   webVersionCache: {
     type: 'remote',
-    remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${process.env.WWEB_VERSION || '2.2412.54'}.html`, // Use env var or default
+    remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${
+      process.env.WWEB_VERSION || '2.2412.54'
+    }.html`, // Use env var or default
   },
 })
 
 const start = async () => {
   cli.printIntro()
-
-  // Client initialization moved outside
-  /*
-  const client = new Client({
-    puppeteer: {
-      args: ['--no-sandbox'],
-    },
-    authStrategy: new LocalAuth({
-      dataPath: process.env.ENVIRONMENT === 'development' ? './wweb_auth_data' : '/var/data',
-    }),
-    webVersionCache: {
-      type: 'remote',
-      remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${process.env.WWEB_VERSION || '2.2412.54'}.html`,
-    },
-  })
-  */ // End of moved client initialization block
 
   client.on(Events.QR_RECEIVED, qr => {
     qrcode.generate(qr, { small: true }, qrcode => {
@@ -97,13 +83,5 @@ const start = async () => {
 }
 
 start()
-
-// Simplified SIGINT handler for testing
-process.on('SIGINT', () => {
-  console.log('\n[Process] SIGINT received! Attempting immediate exit...');
-  // Exit immediately without trying to clean up, just to test signal reception.
-  // Use exit code 1 to indicate termination by signal (non-zero).
-  process.exit(1);
-});
 
 export { botReadyTimestamp }

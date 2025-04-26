@@ -1,56 +1,50 @@
-import process from "process";
+import process from 'process'
 
 // Environment variables
-import dotenv from "dotenv";
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 // Config
 const config = {
-	whitelistedPhoneNumbers: process.env.WHITELISTED_PHONE_NUMBERS?.split(",") || [],
-	whitelistedEnabled: getEnvBooleanWithDefault("WHITELISTED_ENABLED", false),
+  whitelistedPhoneNumbers: process.env.WHITELISTED_PHONE_NUMBERS?.split(',') || [],
+  whitelistedEnabled: getEnvBooleanWithDefault('WHITELISTED_ENABLED', false),
 
-	openAIAPIKeys: (process.env.OPENAI_API_KEYS || process.env.OPENAI_API_KEY || "").split(",").filter((key) => !!key), // Default: []
-	openAIModel: "gpt-4o",
-	maxModelTokens: getEnvMaxModelTokens(), // Default: 4096
-	prePrompt: process.env.PRE_PROMPT, // Default: undefined
+  openAIAPIKeys: (process.env.OPENAI_API_KEYS || process.env.OPENAI_API_KEY || '')
+    .split(',')
+    .filter(key => !!key), // Default:
+  openAIModel: 'gpt-4o',
+  maxModelTokens: getEnvMaxModelTokens(), // Default: 4096
+  prePrompt: process.env.PRE_PROMPT, // Default: undefined
 
-	// Prefix
-	prefixEnabled: getEnvBooleanWithDefault("PREFIX_ENABLED", true), // Default: true
-	prefixSkippedForMe: getEnvBooleanWithDefault("PREFIX_SKIPPED_FOR_ME", true), // Default: true
-	gptPrefix: process.env.GPT_PREFIX || "!gpt", // Default: !gpt
-	// dallePrefix removed
-	resetPrefix: process.env.RESET_PREFIX || "!reset", // Default: !reset
-	langChainPrefix: process.env.LANGCHAIN_PREFIX || "!lang", // Default: !lang
+  // Prefix
+  prefixEnabled: getEnvBooleanWithDefault('PREFIX_ENABLED', true), // Default: true
+  prefixSkippedForMe: getEnvBooleanWithDefault('PREFIX_SKIPPED_FOR_ME', true), // Default: true
+  gptPrefix: process.env.GPT_PREFIX || '!gpt', // Default: !gpt
+  // dallePrefix removed
+  resetPrefix: process.env.RESET_PREFIX || '!reset', // Default: !reset
+  langChainPrefix: process.env.LANGCHAIN_PREFIX || '!lang', // Default: !lang
 
-	// Groupchats
-	groupchatsEnabled: getEnvBooleanWithDefault("GROUPCHATS_ENABLED", false), // Default: false
+  // Groupchats
+  groupchatsEnabled: getEnvBooleanWithDefault('GROUPCHATS_ENABLED', false), // Default: false
 
-	// Prompt Moderation
-	promptModerationEnabled: getEnvBooleanWithDefault("PROMPT_MODERATION_ENABLED", false), // Default: false
-	promptModerationBlacklistedCategories: getEnvPromptModerationBlacklistedCategories(), // Default: ["hate",
-	// "hate/threatening",
-	// "self-harm", "sexual",
-	// "sexual/minors",
-	// "violence",
-	// "violence/graphic"],
 
-	// Add transcription related fields explicitly if they were in IConfig
-	transcriptionMode: process.env.TRANSCRIPTION_MODE, // Use the imported JS object
-	transcriptionLanguage: process.env.TRANSCRIPTION_LANGUAGE || "en" // Default language if needed
-};
+  // Add transcription related fields explicitly if they were in IConfig
+  transcriptionMode: process.env.TRANSCRIPTION_MODE, // Use the imported JS object
+  transcriptionLanguage: process.env.TRANSCRIPTION_LANGUAGE || 'en', // Default language if needed
+}
 
 /**
  * Get the max model tokens from the environment variable
  * @returns The max model tokens from the environment variable or 4096
  */
 function getEnvMaxModelTokens() {
-	const envValue = process.env.MAX_MODEL_TOKENS;
-	if (envValue == undefined || envValue == "") {
-		return 4096;
-	}
+  const envValue = process.env.MAX_MODEL_TOKENS
+  if (envValue == undefined || envValue == '') {
+    return 4096
+  }
 
-	return parseInt(envValue);
+  return parseInt(envValue)
 }
 
 /**
@@ -60,28 +54,14 @@ function getEnvMaxModelTokens() {
  * @returns The value of the environment variable or the default value
  */
 function getEnvBooleanWithDefault(key, defaultValue) {
-	// Removed : string, : boolean types
-	const envValue = process.env[key]?.toLowerCase();
-	if (envValue == undefined || envValue == "") {
-		return defaultValue;
-	}
+  // Removed : string, : boolean types
+  const envValue = process.env[key]?.toLowerCase()
+  if (envValue == undefined || envValue == '') {
+    return defaultValue
+  }
 
-	return envValue == "true";
-}
-
-/**
- * Get the blacklist categories for prompt moderation from the environment variable
- * @returns {string[]} Blacklisted categories for prompt moderation
- */
-function getEnvPromptModerationBlacklistedCategories() {
-	// Removed TS return type
-	const envValue = process.env.PROMPT_MODERATION_BLACKLISTED_CATEGORIES;
-	if (envValue == undefined || envValue == "") {
-		return ["hate", "hate/threatening", "self-harm", "sexual", "sexual/minors", "violence", "violence/graphic"];
-	} else {
-		return JSON.parse(envValue.replace(/'/g, '"'));
-	}
+  return envValue == 'true'
 }
 
 // Export the config object using ESM default export
-export default config;
+export default config

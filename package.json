@@ -16,6 +16,7 @@
     "@clack/prompts": "^0.6.3",
     "@notionhq/client": "^2.2.4",
     "aws-sdk": "^2.1332.0",
+    "axios": "^1.8.4",
     "chatgpt-official": "^1.1.9",
     "dotenv": "^16.0.3",
     "fetch-blob": "^3.2.0",
@@ -25,7 +26,7 @@
     "openai": "^4.53.0",
     "picocolors": "^1.0.0",
     "qrcode-terminal": "github:artradeapp/qrcode-terminal",
-    "vite-node": "^0.31.1",
+    "vite-node": "^3.1.2",
     "whatsapp-web.js": "^1.26.0"
   },
   "devDependencies": {
@@ -35,5 +36,14 @@
   },
   "engines": {
     "node": "18.15.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "semi": false,
+    "printWidth": 100,
+    "arrowParens": "avoid",
+    "bracketSameLine": true
   }
 }
