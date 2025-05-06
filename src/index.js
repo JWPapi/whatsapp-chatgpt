@@ -56,7 +56,9 @@ const start = async () => {
 
     botReadyTimestamp = new Date()
 
-    setupCronJobs(client)
+    if (process.env.JW_VERSION === 'true') {
+      setupCronJobs(client)
+    }
 
     initOpenAI()
     initPerplexity()
