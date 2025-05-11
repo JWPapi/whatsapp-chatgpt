@@ -34,6 +34,19 @@ async function handleIncomingMessage(message) {
       await handleMessageGPT(message, prompt)
       return
     }
+
+    if (body === config.gptPrefix) {
+      const prompt = `What Can you add and say to this message? ${quotedMessage}`
+      await handleMessageGPT(message, prompt)
+      return
+    }
+
+    if (body === 'research') {
+      const prompt = `Please research to this message: ${quotedMessage}`
+      await handleMessageResearch(message, prompt)
+      return
+    }
+
     if (TODO_KEYWORDS.includes(body)) {
       await handleMessageNotion(message, quotedMessage)
       return
@@ -59,8 +72,6 @@ async function handleIncomingMessage(message) {
     cli.print(`Ignoring message from group chat ${chat.name} as group chats are disabled.`)
     return
   }
-
-  const selfNotedMessage = message.fromMe && !message.hasQuotedMsg && message.from === message.to
 
   if (message.hasMedia) {
     const media = await message.downloadMedia()
@@ -105,11 +116,6 @@ async function handleIncomingMessage(message) {
   if (startsWithIgnoreCase(messageString, config.gptPrefix)) {
     const prompt = messageString.substring(config.gptPrefix.length + 1)
     await handleMessageGPT(message, prompt)
-    return
-  }
-
-  if (!config.prefixEnabled || (config.prefixSkippedForMe && selfNotedMessage)) {
-    await handleMessageGPT(message, messageString)
     return
   }
 
