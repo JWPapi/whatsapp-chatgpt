@@ -11,12 +11,12 @@ import { handleMessageNotion } from './notion.js'
 import { handleMessageResearch } from './handleMessageResearch.js'
 
 import { botReadyTimestamp } from '../index.js'
+import { handleExchangeCalculation } from './handleExchangeCalculation.js'
 
 const TODO_KEYWORDS = ['todo', 'to do', 'to-do']
 
 async function handleIncomingMessage(message) {
   let messageString = message.body
-  console.log(message)
 
   if (message.hasQuotedMsg) {
     let { body } = message
@@ -110,6 +110,12 @@ async function handleIncomingMessage(message) {
 
   if (!config.prefixEnabled || (config.prefixSkippedForMe && selfNotedMessage)) {
     await handleMessageGPT(message, messageString)
+    return
+  }
+
+  if (['exchange', 'xe'].some(keyword => startsWithIgnoreCase(messageString, keyword))) {
+    const prompt = messageString.split(' ').slice(1).join(' ')
+    await handleExchangeCalculation(message, prompt)
     return
   }
 
