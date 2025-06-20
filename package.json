@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@abskmj/exchangeratesapi": "^3.0.1",
-    "@clack/prompts": "^0.6.3",
+    "@clack/prompts": "^0.11.0",
     "@notionhq/client": "^2.2.4",
     "axios": "^1.8.4",
     "dotenv": "^16.0.3",
