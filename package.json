@@ -23,7 +23,7 @@
     "picocolors": "^1.0.0",
     "qrcode-terminal": "github:artradeapp/qrcode-terminal",
     "vite-node": "^1.6.0",
-    "whatsapp-web.js": "^1.26.0"
+    "whatsapp-web.js": "^1.31.0"
   },
   "devDependencies": {
     "prettier": "^2.8.8"
