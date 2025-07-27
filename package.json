@@ -22,7 +22,7 @@
     "openai": "^4.53.0",
     "picocolors": "^1.0.0",
     "qrcode-terminal": "github:artradeapp/qrcode-terminal",
-    "vite-node": "^3.1.2",
+    "vite-node": "^1.6.0",
     "whatsapp-web.js": "^1.26.0"
   },
   "devDependencies": {
