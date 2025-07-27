@@ -22,12 +22,6 @@ const client = new Client({
   authStrategy: new LocalAuth({
     dataPath: process.env.ENVIRONMENT === 'development' ? './wweb_auth_data' : '/var/data',
   }),
-  webVersionCache: {
-    type: 'remote',
-    remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${
-      process.env.WWEB_VERSION || '2.3000.1014057928'
-    }.html`, // Use env var or default
-  },
 })
 
 const start = async () => {
