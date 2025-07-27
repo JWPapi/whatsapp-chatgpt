@@ -20,7 +20,7 @@ const client = new Client({
     args: ['--no-sandbox'],
   },
   authStrategy: new LocalAuth({
-    dataPath: './wweb_auth_data',
+    dataPath: process.env.ENVIRONMENT === 'development' ? './wweb_auth_data' : '/var/data',
   }),
 })
 
