@@ -6,7 +6,7 @@ import * as cli from '../cli/ui.js'
 
 import { handleMessageGPT } from './gpt.js'
 
-import { transcribeOpenAI } from '../providers/openai.js'
+import { transcribeOpenAI, chatCompletion } from '../providers/openai.js'
 import { handleMessageNotion } from './notion.js'
 import { handleMessageResearch } from './handleMessageResearch.js'
 
@@ -105,10 +105,27 @@ async function handleIncomingMessage(message) {
       })`,
     )
 
-    const reply = `${transcribedText}${
-      transcribedLanguage ? ` (language: ${transcribedLanguage})` : ''
-    }`
-    message.reply(reply)
+    // Generate a summary of the transcribed text
+    cli.print('[Summary] Generating summary of voice message...')
+    
+    try {
+      const summaryPrompt = `Please provide a clear and concise summary of what this person is saying in their voice message. Focus on the main points and key information they want to communicate:\n\n"${transcribedText}"`
+      
+      const summary = await chatCompletion(summaryPrompt)
+      
+      const reply = `📝 Voice Message Summary:\n${summary}${
+        transcribedLanguage ? `\n\n(Original language: ${transcribedLanguage})` : ''
+      }`
+      
+      message.reply(reply)
+    } catch (error) {
+      cli.print(`[Summary] Failed to generate summary: ${error.message}`)
+      // Fallback to original transcription if summary fails
+      const reply = `${transcribedText}${
+        transcribedLanguage ? ` (language: ${transcribedLanguage})` : ''
+      }`
+      message.reply(reply)
+    }
 
     return
   }
