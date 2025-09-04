@@ -1,5 +1,5 @@
 import qrcode from 'qrcode-terminal'
-import { Client, Events, LocalAuth } from 'whatsapp-web.js'
+import { Client, Events, NoAuth } from 'whatsapp-web.js'
 
 import constants from './constants.js'
 
@@ -32,9 +32,7 @@ const client = new Client({
     headless: true,
     timeout: 60000,
   },
-  authStrategy: new LocalAuth({
-    dataPath: './wweb_auth_data',
-  }),
+  authStrategy: new NoAuth(),
 })
 
 const start = async () => {
