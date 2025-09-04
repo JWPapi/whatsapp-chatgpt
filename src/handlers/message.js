@@ -109,20 +109,20 @@ async function handleIncomingMessage(message) {
     cli.print('[Summary] Generating summary of voice message...')
     
     try {
-      const summaryPrompt = `Please provide a clear and concise summary of what this person is saying in their voice message. Focus on the main points and key information they want to communicate:\n\n"${transcribedText}"`
+      const summaryPrompt = `Please provide a clear and well-formatted summary of this voice message. Use emojis, bullet points, and formatting to make it easy to understand. Keep the original language and focus on the main points and key information they want to communicate. Format it nicely with proper structure:\n\n"${transcribedText}"`
       
       const summary = await chatCompletion(summaryPrompt)
       
-      const reply = `📝 Voice Message Summary:\n${summary}${
-        transcribedLanguage ? `\n\n(Original language: ${transcribedLanguage})` : ''
-      }`
+      const reply = `🎤 Voice Message Summary:\n\n${summary}${
+        transcribedLanguage ? `\n\n🌐 Language: ${transcribedLanguage}` : ''
+      }\n\n📝 Original: "${transcribedText}"`
       
       message.reply(reply)
     } catch (error) {
       cli.print(`[Summary] Failed to generate summary: ${error.message}`)
       // Fallback to original transcription if summary fails
-      const reply = `${transcribedText}${
-        transcribedLanguage ? ` (language: ${transcribedLanguage})` : ''
+      const reply = `🎤 Voice Message:\n${transcribedText}${
+        transcribedLanguage ? `\n\n🌐 Language: ${transcribedLanguage}` : ''
       }`
       message.reply(reply)
     }

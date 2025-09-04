@@ -1,5 +1,5 @@
 import qrcode from 'qrcode-terminal'
-import { Client, Events, NoAuth } from 'whatsapp-web.js'
+import { Client, Events, LocalAuth } from 'whatsapp-web.js'
 
 import constants from './constants.js'
 
@@ -16,7 +16,7 @@ console.log('environment:', process.env.ENVIRONMENT)
 
 // Initialize client outside the start function to make it accessible to the signal handler
 const client = new Client({
-  authStrategy: new NoAuth(),
+  authStrategy: new LocalAuth(),
 })
 
 const start = async () => {
