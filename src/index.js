@@ -18,7 +18,16 @@ console.log('environment:', process.env.ENVIRONMENT)
 const client = new Client({
   puppeteer: {
     executablePath: '/usr/bin/chromium-browser',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--disable-gpu'
+    ],
+    headless: true,
   },
   authStrategy: new LocalAuth({
     dataPath: './wweb_auth_data',
