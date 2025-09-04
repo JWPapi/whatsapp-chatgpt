@@ -19,9 +19,7 @@ const client = new Client({
   puppeteer: {
     args: [
       '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu'
+      '--disable-setuid-sandbox'
     ],
     headless: true,
   },
