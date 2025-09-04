@@ -17,7 +17,8 @@ console.log('environment:', process.env.ENVIRONMENT)
 // Initialize client outside the start function to make it accessible to the signal handler
 const client = new Client({
   puppeteer: {
-    args: ['--no-sandbox'],
+    executablePath: '/usr/bin/chromium-browser',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   },
   authStrategy: new LocalAuth({
     dataPath: './wweb_auth_data',
