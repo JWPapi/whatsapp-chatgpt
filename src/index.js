@@ -17,20 +17,13 @@ console.log('environment:', process.env.ENVIRONMENT)
 // Initialize client outside the start function to make it accessible to the signal handler
 const client = new Client({
   puppeteer: {
-    executablePath: '/usr/bin/chromium-browser',
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
-      '--disable-accelerated-2d-canvas',
-      '--no-first-run',
-      '--no-zygote',
-      '--disable-gpu',
-      '--disable-web-security',
-      '--disable-features=VizDisplayCompositor'
+      '--disable-gpu'
     ],
     headless: true,
-    timeout: 60000,
   },
   authStrategy: new NoAuth(),
 })
