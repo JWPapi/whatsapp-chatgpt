@@ -25,9 +25,12 @@ const client = new Client({
       '--disable-accelerated-2d-canvas',
       '--no-first-run',
       '--no-zygote',
-      '--disable-gpu'
+      '--disable-gpu',
+      '--disable-web-security',
+      '--disable-features=VizDisplayCompositor'
     ],
     headless: true,
+    timeout: 60000,
   },
   authStrategy: new LocalAuth({
     dataPath: './wweb_auth_data',
