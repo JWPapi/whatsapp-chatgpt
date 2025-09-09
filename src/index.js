@@ -17,6 +17,9 @@ console.log('environment:', process.env.ENVIRONMENT)
 // Initialize client outside the start function to make it accessible to the signal handler
 const client = new Client({
   authStrategy: new LocalAuth(),
+  puppeteer: {
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  },
 })
 
 const start = async () => {
