@@ -105,26 +105,8 @@ async function handleIncomingMessage(message) {
       })`,
     )
 
-    // Generate a summary of the transcribed text
-    cli.print('[Summary] Generating summary of voice message...')
-    
-    try {
-      const contact = await message.getContact()
-      const senderName = contact.pushname || contact.name || 'Unknown'
-      
-      const summaryPrompt = `Provide a precise, concise summary of this voice message. Keep it short and to the point. Focus only on the key information:\n\n"${transcribedText}"`
-      
-      const summary = await chatCompletion(summaryPrompt)
-      
-      const reply = `🎤 ${senderName}: ${summary}`
-      
-      message.reply(reply)
-    } catch (error) {
-      cli.print(`[Summary] Failed to generate summary: ${error.message}`)
-      // Fallback to original transcription if summary fails
-      const reply = `🎤 ${transcribedText}`
-      message.reply(reply)
-    }
+    const reply = `🎤 ${transcribedText}`
+    message.reply(reply)
 
     return
   }
