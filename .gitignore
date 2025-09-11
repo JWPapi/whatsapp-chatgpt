@@ -3,6 +3,7 @@ node_modules/*
 session/
 db.json
 .wwebjs_cache/
+.wwebjs_auth/
 
 # Created by https://www.toptal.com/developers/gitignore/api/vs,intellij+all,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=vs,intellij+all,node

@@ -21,10 +21,10 @@
     "node-cron": "^3.0.3",
     "openai": "^4.53.0",
     "picocolors": "^1.0.0",
-    "puppeteer": "^19.11.1",
+    "puppeteer": "^24.20.0",
     "qrcode-terminal": "github:artradeapp/qrcode-terminal",
     "vite-node": "^1.6.0",
-    "whatsapp-web.js": "^1.33.2"
+    "whatsapp-web.js": "^1.34.1"
   },
   "devDependencies": {
     "prettier": "^2.8.8"

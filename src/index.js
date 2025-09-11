@@ -22,6 +22,8 @@ const client = new Client({
   },
 })
 
+client.send
+
 const start = async () => {
   cli.printIntro()
 
