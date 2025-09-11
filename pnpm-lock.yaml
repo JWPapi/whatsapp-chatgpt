@@ -39,8 +39,8 @@ importers:
         specifier: ^24.20.0
         version: 24.20.0
       qrcode-terminal:
-        specifier: github:artradeapp/qrcode-terminal
-        version: https://codeload.github.com/artradeapp/qrcode-terminal/tar.gz/9e8585283affca854e677e657f4db2fc4e85abbc
+        specifier: ^0.12.0
+        version: 0.12.0
       vite-node:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@22.14.1)
@@ -1075,9 +1075,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  qrcode-terminal@https://codeload.github.com/artradeapp/qrcode-terminal/tar.gz/9e8585283affca854e677e657f4db2fc4e85abbc:
-    resolution: {tarball: https://codeload.github.com/artradeapp/qrcode-terminal/tar.gz/9e8585283affca854e677e657f4db2fc4e85abbc}
-    version: 0.12.0
+  qrcode-terminal@0.12.0:
+    resolution: {integrity: sha512-EXtzRZmC+YGmGlDFbXKxQiMZNwCLEO6BANKXG4iCtSIM0yqc/pappSx3RIKr4r0uh5JsBckOXeKrB3Iz7mdQpQ==}
     hasBin: true
 
   query-string@6.14.1:
@@ -2359,7 +2358,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  qrcode-terminal@https://codeload.github.com/artradeapp/qrcode-terminal/tar.gz/9e8585283affca854e677e657f4db2fc4e85abbc: {}
+  qrcode-terminal@0.12.0: {}
 
   query-string@6.14.1:
     dependencies:
