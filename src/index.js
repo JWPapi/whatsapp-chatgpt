@@ -11,6 +11,26 @@ import { initOpenAI } from './providers/openai.js'
 import { initPerplexity } from './providers/perplexity.js'
 import { setupCronJobs } from './cron/cron.js'
 
+// Global error handlers to prevent crashes from whatsapp-web.js internal errors
+process.on('unhandledRejection', (reason, promise) => {
+  const errorMsg = reason?.message || String(reason)
+  if (errorMsg.includes('markedUnread') || errorMsg.includes('undefined')) {
+    console.error('[WhatsApp] Suppressed internal WhatsApp error:', errorMsg)
+    return // Don't crash on known whatsapp-web.js issues
+  }
+  console.error('[Unhandled Rejection]', reason)
+})
+
+process.on('uncaughtException', (error) => {
+  const errorMsg = error?.message || String(error)
+  if (errorMsg.includes('markedUnread') || errorMsg.includes('undefined')) {
+    console.error('[WhatsApp] Suppressed internal WhatsApp error:', errorMsg)
+    return // Don't crash on known whatsapp-web.js issues
+  }
+  console.error('[Uncaught Exception]', error)
+  process.exit(1)
+})
+
 let botReadyTimestamp = null
 
 console.log('environment:', process.env.ENVIRONMENT)
@@ -77,20 +97,28 @@ const start = async () => {
     })
 
     client.on(Events.MESSAGE_RECEIVED, async message => {
-      if (message.from == constants.statusBroadcast) {
-        cli.print(`Ignoring message from status broadcast: ${message.from}`)
-        return
-      }
+      try {
+        if (message.from == constants.statusBroadcast) {
+          cli.print(`Ignoring message from status broadcast: ${message.from}`)
+          return
+        }
 
-      await handleIncomingMessage(message)
+        await handleIncomingMessage(message)
+      } catch (error) {
+        console.error('[MESSAGE_RECEIVED] Error handling message:', error.message)
+      }
     })
 
     client.on(Events.MESSAGE_CREATE, async message => {
-      if (message.from == constants.statusBroadcast) return
+      try {
+        if (message.from == constants.statusBroadcast) return
 
-      if (!message.fromMe) return
+        if (!message.fromMe) return
 
-      await handleIncomingMessage(message)
+        await handleIncomingMessage(message)
+      } catch (error) {
+        console.error('[MESSAGE_CREATE] Error handling message:', error.message)
+      }
     })
 
     client.initialize().catch(console.error)
