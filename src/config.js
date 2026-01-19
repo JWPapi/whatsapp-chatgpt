@@ -3,7 +3,7 @@ import process from 'process'
 // Environment variables
 import dotenv from 'dotenv'
 
-dotenv.config()
+dotenv.config({ override: true })
 
 // Config
 const config = {
