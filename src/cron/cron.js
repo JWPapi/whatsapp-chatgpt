@@ -40,10 +40,7 @@ async function setupCronJobs(client) {
   console.log('[Cron] Cron jobs scheduled.')
 }
 
-async function generateSMMDealFinderMessage(client) {
-  const apiResponse = await axios.get('https://smmdealfinder.com/api/wa-reporting')
-  await sendScheduledMessage(client, '120363229907512639@g.us', apiResponse.data)
-}
+
 
 async function getSkillsMessage(client) {
   const apiResponse = await axios.get('https://dbwagner.vercel.app/api/wa-reporting')

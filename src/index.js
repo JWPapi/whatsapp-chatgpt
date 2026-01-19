@@ -1,3 +1,4 @@
+import fs from 'fs'
 import qrcode from 'qrcode-terminal'
 import { Client, Events, LocalAuth } from 'whatsapp-web.js'
 
@@ -14,10 +15,14 @@ let botReadyTimestamp = null
 
 console.log('environment:', process.env.ENVIRONMENT)
 
+// Detect Docker environment
+const isDocker = fs.existsSync('/.dockerenv')
+
 // Initialize client outside the start function to make it accessible to the signal handler
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
+    ...(isDocker && { executablePath: '/usr/bin/chromium' }),
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   },
 })
