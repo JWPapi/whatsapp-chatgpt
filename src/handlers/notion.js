@@ -12,15 +12,15 @@ export const handleMessageNotion = async (message, prompt) => {
 
 		if (prompt.startsWith("list")) {
 			const toDos = await getEntriesFromDB(user.db, notion);
-			await message.reply(`*List of all entries:*\n [ ] ${toDos.join("\n [ ] ")}`);
+			await message.reply(`*List of all entries:*\n [ ] ${toDos.join("\n [ ] ")}`, undefined, { sendSeen: false });
 			return;
 		}
 
 		await addEntryToDB(prompt, user.db, notion);
-		await message.reply(`Added to ${user.name} To Do: ${prompt}`);
+		await message.reply(`Added to ${user.name} To Do: ${prompt}`, undefined, { sendSeen: false });
 	} catch (error) {
 		console.error("An error occured", error);
-		await message.reply("An error occured, please contact the administrator. (" + error.message + ")");
+		await message.reply("An error occured, please contact the administrator. (" + error.message + ")", undefined, { sendSeen: false });
 	}
 };
 

@@ -29,9 +29,9 @@ export const handleMessageGPT = async (message, prompt) => {
 
 		cli.print(`[GPT] Answer to ${message.from}: ${response}  | OpenAI request took ${end}ms)`);
 
-		message.reply(response);
+		message.reply(response, undefined, { sendSeen: false });
 	} catch (error) {
 		console.error("An error occured", error);
-		message.reply("An error occured, please contact the administrator. (" + error.message + ")");
+		message.reply("An error occured, please contact the administrator. (" + error.message + ")", undefined, { sendSeen: false });
 	}
 };

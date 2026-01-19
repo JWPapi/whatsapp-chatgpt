@@ -95,7 +95,7 @@ async function handleIncomingMessage(message) {
     const { text: transcribedText, language: transcribedLanguage } = res || {}
 
     if (!transcribedText) {
-      message.reply("I couldn't understand what you said.")
+      message.reply("I couldn't understand what you said.", undefined, { sendSeen: false })
       return
     }
 
@@ -106,7 +106,7 @@ async function handleIncomingMessage(message) {
     )
 
     const reply = `🎤 ${transcribedText}`
-    message.reply(reply)
+    message.reply(reply, undefined, { sendSeen: false })
 
     return
   }

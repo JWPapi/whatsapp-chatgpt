@@ -5,7 +5,7 @@ import axios from 'axios'
 async function sendScheduledMessage(client, chatId, message) {
   try {
     console.log(`[Cron] Attempting to send message to ${chatId}: "${message}"`)
-    await client.sendMessage(chatId, message)
+    await client.sendMessage(chatId, message, { sendSeen: false })
     console.log(`[Cron] Message sent successfully to ${chatId}.`)
   } catch (error) {
     console.error(`[Cron] Failed to send message to ${chatId}:`, error)

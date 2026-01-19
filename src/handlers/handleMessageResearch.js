@@ -11,7 +11,7 @@ export const handleMessageResearch = async (message, prompt) => { // Removed : M
         // Use the imported client instance directly
         const perplexity = perplexityClient; // Assign the imported instance
         if (!perplexity) {
-             message.reply("Error: Perplexity AI client is not initialized or API key is missing.");
+             message.reply("Error: Perplexity AI client is not initialized or API key is missing.", undefined, { sendSeen: false });
              console.error("[Research] Perplexity client not initialized.");
              return;
         }
@@ -35,11 +35,11 @@ export const handleMessageResearch = async (message, prompt) => { // Removed : M
         //log the model and token
         console.log("Conv: ", conv);
 
-        message.reply(conv.choices[0].message.content);
+        message.reply(conv.choices[0].message.content, undefined, { sendSeen: false });
 
     } catch (error) {
         console.error("An error occured", error);
-        message.reply("An error occured, please contact the administrator. (" + error.message + ")");
+        message.reply("An error occured, please contact the administrator. (" + error.message + ")", undefined, { sendSeen: false });
     }
 };
 

@@ -27,11 +27,11 @@ export const handleExchangeCalculation = async (message, prompt) => { // Removed
     const convertedAmount = (amountInBaseCurrency * exchangeRateTarget) / exchangeRateBase
 
     message.reply(
-      `${amountInBaseCurrency} ${baseCurrency} is equal to ${convertedAmount.toFixed(2)} ${targetCurrency}`)
+      `${amountInBaseCurrency} ${baseCurrency} is equal to ${convertedAmount.toFixed(2)} ${targetCurrency}`, undefined, { sendSeen: false })
 
   } catch (error) {
     console.error('An error occured', error)
-    message.reply('An error occured, please contact the administrator. (' + error.message + ')')
+    message.reply('An error occured, please contact the administrator. (' + error.message + ')', undefined, { sendSeen: false })
   }
 }
 
