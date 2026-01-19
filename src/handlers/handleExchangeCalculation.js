@@ -1,6 +1,7 @@
 // const { Message } = require("whatsapp-web.js"); // Message type often not needed in JS
 // Use the exported perplexity client instance directly
 import exchange from '@abskmj/exchangeratesapi'
+import { safeReply } from '../utils.js'
 
 // Mapping from number to last conversation id (if needed for research context)
 // const conversations = {};
@@ -26,12 +27,12 @@ export const handleExchangeCalculation = async (message, prompt) => { // Removed
     console.log('Exchange rate target:', exchangeRateTarget)
     const convertedAmount = (amountInBaseCurrency * exchangeRateTarget) / exchangeRateBase
 
-    message.reply(
-      `${amountInBaseCurrency} ${baseCurrency} is equal to ${convertedAmount.toFixed(2)} ${targetCurrency}`, undefined, { sendSeen: false })
+    await safeReply(message,
+      `${amountInBaseCurrency} ${baseCurrency} is equal to ${convertedAmount.toFixed(2)} ${targetCurrency}`)
 
   } catch (error) {
     console.error('An error occured', error)
-    message.reply('An error occured, please contact the administrator. (' + error.message + ')', undefined, { sendSeen: false })
+    await safeReply(message, 'An error occured, please contact the administrator. (' + error.message + ')')
   }
 }
 

@@ -2,6 +2,7 @@
 // Use the exported perplexity client instance directly
 import { perplexity as perplexityClient } from "../providers/perplexity.js"; // Import the instance, rename for clarity
 import * as cli from "../cli/ui.js";
+import { safeReply } from "../utils.js";
 
 // Mapping from number to last conversation id (if needed for research context)
 // const conversations = {};
@@ -11,7 +12,7 @@ export const handleMessageResearch = async (message, prompt) => { // Removed : M
         // Use the imported client instance directly
         const perplexity = perplexityClient; // Assign the imported instance
         if (!perplexity) {
-             message.reply("Error: Perplexity AI client is not initialized or API key is missing.", undefined, { sendSeen: false });
+             await safeReply(message, "Error: Perplexity AI client is not initialized or API key is missing.");
              console.error("[Research] Perplexity client not initialized.");
              return;
         }
@@ -35,11 +36,11 @@ export const handleMessageResearch = async (message, prompt) => { // Removed : M
         //log the model and token
         console.log("Conv: ", conv);
 
-        message.reply(conv.choices[0].message.content, undefined, { sendSeen: false });
+        await safeReply(message, conv.choices[0].message.content);
 
     } catch (error) {
         console.error("An error occured", error);
-        message.reply("An error occured, please contact the administrator. (" + error.message + ")", undefined, { sendSeen: false });
+        await safeReply(message, "An error occured, please contact the administrator. (" + error.message + ")");
     }
 };
 

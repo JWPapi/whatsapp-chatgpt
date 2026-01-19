@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import * as cli from "../cli/ui.js";
 import { chatCompletion } from "../providers/openai.js";
+import { safeReply } from "../utils.js";
 
 const conversations = {};
 
@@ -29,9 +30,9 @@ export const handleMessageGPT = async (message, prompt) => {
 
 		cli.print(`[GPT] Answer to ${message.from}: ${response}  | OpenAI request took ${end}ms)`);
 
-		message.reply(response, undefined, { sendSeen: false });
+		await safeReply(message, response);
 	} catch (error) {
 		console.error("An error occured", error);
-		message.reply("An error occured, please contact the administrator. (" + error.message + ")", undefined, { sendSeen: false });
+		await safeReply(message, "An error occured, please contact the administrator. (" + error.message + ")");
 	}
 };

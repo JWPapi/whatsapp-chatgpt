@@ -1,4 +1,4 @@
-import { startsWithIgnoreCase } from '../utils.js'
+import { startsWithIgnoreCase, safeReply } from '../utils.js'
 
 import config from '../config.js'
 
@@ -95,7 +95,7 @@ async function handleIncomingMessage(message) {
     const { text: transcribedText, language: transcribedLanguage } = res || {}
 
     if (!transcribedText) {
-      message.reply("I couldn't understand what you said.", undefined, { sendSeen: false })
+      await safeReply(message, "I couldn't understand what you said.")
       return
     }
 
@@ -106,7 +106,7 @@ async function handleIncomingMessage(message) {
     )
 
     const reply = `🎤 ${transcribedText}`
-    message.reply(reply, undefined, { sendSeen: false })
+    await safeReply(message, reply)
 
     return
   }

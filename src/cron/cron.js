@@ -1,11 +1,12 @@
 const cron = require('node-cron')
 import axios from 'axios'
+import { safeSendMessage } from '../utils.js'
 
 // Example function to demonstrate sending a message
 async function sendScheduledMessage(client, chatId, message) {
   try {
     console.log(`[Cron] Attempting to send message to ${chatId}: "${message}"`)
-    await client.sendMessage(chatId, message, { sendSeen: false })
+    await safeSendMessage(client, chatId, message)
     console.log(`[Cron] Message sent successfully to ${chatId}.`)
   } catch (error) {
     console.error(`[Cron] Failed to send message to ${chatId}:`, error)

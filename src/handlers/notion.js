@@ -1,6 +1,7 @@
 // const { Message } = require("whatsapp-web.js"); // Message type often not needed in JS
 import * as cli from "../cli/ui.js";
 import { Client } from "@notionhq/client";
+import { safeReply } from "../utils.js";
 
 export const handleMessageNotion = async (message, prompt) => {
 	// Removed : Message, : string types, added export
@@ -12,15 +13,15 @@ export const handleMessageNotion = async (message, prompt) => {
 
 		if (prompt.startsWith("list")) {
 			const toDos = await getEntriesFromDB(user.db, notion);
-			await message.reply(`*List of all entries:*\n [ ] ${toDos.join("\n [ ] ")}`, undefined, { sendSeen: false });
+			await safeReply(message, `*List of all entries:*\n [ ] ${toDos.join("\n [ ] ")}`);
 			return;
 		}
 
 		await addEntryToDB(prompt, user.db, notion);
-		await message.reply(`Added to ${user.name} To Do: ${prompt}`, undefined, { sendSeen: false });
+		await safeReply(message, `Added to ${user.name} To Do: ${prompt}`);
 	} catch (error) {
 		console.error("An error occured", error);
-		await message.reply("An error occured, please contact the administrator. (" + error.message + ")", undefined, { sendSeen: false });
+		await safeReply(message, "An error occured, please contact the administrator. (" + error.message + ")");
 	}
 };
 
