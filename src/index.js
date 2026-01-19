@@ -38,12 +38,25 @@ console.log('environment:', process.env.ENVIRONMENT)
 // Detect Docker environment
 const isDocker = fs.existsSync('/.dockerenv')
 
+// Find Chromium executable path for Docker environments
+const getChromiumPath = () => {
+  const paths = ['/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/google-chrome']
+  for (const p of paths) {
+    if (fs.existsSync(p)) {
+      console.log(`[Chromium] Found at: ${p}`)
+      return p
+    }
+  }
+  console.error('[Chromium] Not found at any expected path:', paths)
+  return null // let puppeteer use its bundled browser
+}
+
 // Initialize client outside the start function to make it accessible to the signal handler
 const client = new Client({
   authStrategy: new LocalAuth(),
   markOnlineOnConnect: false,
   puppeteer: {
-    ...(isDocker && { executablePath: '/usr/bin/chromium' }),
+    ...(isDocker && { executablePath: getChromiumPath() }),
     headless: true,
     args: [
       '--no-sandbox',
