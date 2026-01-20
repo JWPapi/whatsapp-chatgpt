@@ -24,6 +24,7 @@ export async function transcribeOpenAI(audioBuffer) {
   try {
     await convertOggToWav(oggPath, wavPath)
   } catch (e) {
+    console.error('[Transcription] FFmpeg conversion failed:', e.message)
     fs.unlinkSync(oggPath)
     return {
       text: '',
@@ -41,7 +42,7 @@ export async function transcribeOpenAI(audioBuffer) {
       text: transcription.text,
     }
   } catch (e) {
-    console.error(e)
+    console.error('[Transcription] OpenAI Whisper API failed:', e.message)
     return {
       text: '',
       language: language,
