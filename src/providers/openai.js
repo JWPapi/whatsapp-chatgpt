@@ -3,7 +3,6 @@ import os from 'os'
 import path from 'path'
 import { randomUUID } from 'crypto'
 import OpenAI from 'openai'
-import ffmpeg from 'fluent-ffmpeg'
 import config from '../config.js'
 
 export let openai
@@ -13,28 +12,13 @@ export function initOpenAI() {
 }
 
 export async function transcribeOpenAI(audioBuffer) {
-  let language = ''
-
   const tempdir = os.tmpdir()
   const oggPath = path.join(tempdir, randomUUID() + '.ogg')
-  const wavFilename = randomUUID() + '.wav'
-  const wavPath = path.join(tempdir, wavFilename)
   fs.writeFileSync(oggPath, audioBuffer)
 
   try {
-    await convertOggToWav(oggPath, wavPath)
-  } catch (e) {
-    console.error('[Transcription] FFmpeg conversion failed:', e.message)
-    fs.unlinkSync(oggPath)
-    return {
-      text: '',
-      language,
-    }
-  }
-
-  try {
     const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(wavPath),
+      file: fs.createReadStream(oggPath),
       model: 'whisper-1',
     })
 
@@ -45,24 +29,11 @@ export async function transcribeOpenAI(audioBuffer) {
     console.error('[Transcription] OpenAI Whisper API failed:', e.message)
     return {
       text: '',
-      language: language,
+      language: '',
     }
   } finally {
     fs.unlinkSync(oggPath)
-    fs.unlinkSync(wavPath)
   }
-}
-
-async function convertOggToWav(oggPath, wavPath) {
-  return new Promise((resolve, reject) => {
-    ffmpeg(oggPath)
-      .toFormat('wav')
-      .outputOptions('-acodec pcm_s16le')
-      .output(wavPath)
-      .on('end', () => resolve())
-      .on('error', err => reject(err))
-      .run()
-  })
 }
 
 export async function chatCompletion(message, options = {}) {
