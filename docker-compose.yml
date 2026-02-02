@@ -9,6 +9,6 @@ services:
     env_file:
       - .env
     environment:
-      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      - PUPPETEER_CACHE_DIR=/app/.cache/puppeteer
     volumes:
       - ./.wwebjs_auth:/app/.wwebjs_auth
