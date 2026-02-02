@@ -36,9 +36,11 @@ const client = new Client({
   markOnlineOnConnect: false,
   userAgent: false as any,
   webVersionCache: { type: 'none' },
+  authTimeoutMs: 300000, // 5 minutes for first QR auth
+  qrMaxRetries: 5,
   puppeteer: {
     headless: true,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/opt/puppeteer-cache/chrome/linux-140.0.7339.82/chrome-linux64/chrome',
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/opt/puppeteer-cache/chrome/linux-144.0.7559.96/chrome-linux64/chrome',
     protocolTimeout: 120000, // 2 minute timeout
     args: [
       '--no-sandbox',
