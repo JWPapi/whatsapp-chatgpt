@@ -38,7 +38,7 @@ const client = new Client({
   webVersionCache: { type: 'none' },
   puppeteer: {
     headless: true,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+    ...(process.env.PUPPETEER_EXECUTABLE_PATH ? { executablePath: process.env.PUPPETEER_EXECUTABLE_PATH } : {}),
     protocolTimeout: 120000, // 2 minute timeout
     args: [
       '--no-sandbox',
