@@ -26,7 +26,7 @@ RUN pnpm install --frozen-lockfile
 
 # Install Puppeteer's bundled Chrome (compatible version)
 ENV PUPPETEER_CACHE_DIR=/opt/puppeteer-cache
-RUN npx puppeteer browsers install chrome && chmod -R 755 /opt/puppeteer-cache
+RUN npx puppeteer browsers install chrome@144.0.7559.96 && chmod -R 755 /opt/puppeteer-cache
 
 # Create directories with correct ownership
 RUN mkdir -p /app/.wwebjs_auth && chown -R botuser:botuser /app
