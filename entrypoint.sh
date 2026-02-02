@@ -14,6 +14,15 @@ find /app/.wwebjs_auth -name "SingletonCookie" -delete 2>/dev/null || true
 find /app/.wwebjs_auth -name "SingletonSocket" -delete 2>/dev/null || true
 find /app/.wwebjs_auth -name "lockfile" -delete 2>/dev/null || true
 
+# Auto-detect puppeteer Chrome path
+if [ -z "$PUPPETEER_EXECUTABLE_PATH" ]; then
+  CHROME_BIN=$(find /app/.cache/puppeteer -name "chrome" -type f -executable 2>/dev/null | head -1)
+  if [ -n "$CHROME_BIN" ]; then
+    export PUPPETEER_EXECUTABLE_PATH="$CHROME_BIN"
+    echo "Using Chrome: $CHROME_BIN"
+  fi
+fi
+
 # Start the bot as botuser
 cd /app
 exec gosu botuser pnpm start

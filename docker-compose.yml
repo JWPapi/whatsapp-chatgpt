@@ -10,6 +10,5 @@ services:
       - .env
     environment:
       - PUPPETEER_CACHE_DIR=/app/.cache/puppeteer
-      - PUPPETEER_EXECUTABLE_PATH=/app/.cache/puppeteer/chrome/linux-140.0.7339.82/chrome-linux64/chrome
     volumes:
       - ./.wwebjs_auth:/app/.wwebjs_auth

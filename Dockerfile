@@ -24,8 +24,13 @@ COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
-# Manually download puppeteer's compatible Chrome
+# Download puppeteer's compatible Chrome
 RUN npx puppeteer browsers install chrome
+
+# Patch whatsapp-web.js: change waitUntil from 'load' to 'domcontentloaded'
+# The 'load' event never fires on some Chrome/headless combinations with WhatsApp Web
+RUN find /app/node_modules -path '*/whatsapp-web.js/src/Client.js' -exec \
+  sed -i "s/waitUntil: 'load'/waitUntil: 'domcontentloaded'/" {} \;
 
 # Create directories with correct ownership
 RUN mkdir -p /app/.wwebjs_auth && chown -R botuser:botuser /app
