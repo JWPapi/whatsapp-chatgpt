@@ -84,7 +84,7 @@ async function handleIncomingMessage(message: Message): Promise<void> {
     return
   }
 
-  const chatId = getChatId(message)
+  const chatId = chat.id._serialized
 
   // 3. Handle audio messages — transcribe, then route through same logic as text
   let textToProcess = messageString
