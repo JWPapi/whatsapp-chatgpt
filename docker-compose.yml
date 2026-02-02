@@ -1,15 +1,13 @@
-version: "3"
 services:
-    whatsapp-chatgpt:
-        container_name: whatsapp-chatgpt
-        read_only: true
-        image: ghcr.io/askrella/whatsapp-chatgpt:master
-        environment:
-            OPENAI_API_KEY: ""
-            OPENAI_GPT_MODEL: ""
-            PREFIX_ENABLED: ""
-        restart: unless-stopped
-        volumes:
-            - session-data:/app/session
-volumes:
-    session-data:
+  whatsapp-bot:
+    build: .
+    container_name: whatsapp-bot
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    environment:
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+    volumes:
+      - ./.wwebjs_auth:/app/.wwebjs_auth
