@@ -40,7 +40,7 @@ const client = new Client({
   qrMaxRetries: 5,
   puppeteer: {
     headless: true,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/opt/puppeteer-cache/chrome/linux-144.0.7559.96/chrome-linux64/chrome',
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
     protocolTimeout: 120000, // 2 minute timeout
     args: [
       '--no-sandbox',

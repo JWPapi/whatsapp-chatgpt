@@ -8,5 +8,7 @@ services:
     tty: true
     env_file:
       - .env
+    environment:
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
     volumes:
       - ./.wwebjs_auth:/app/.wwebjs_auth
