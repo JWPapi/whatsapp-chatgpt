@@ -1,78 +1,39 @@
-import { startsWithIgnoreCase } from '../utils.js'
-
 import config from '../config.js'
-
 import * as cli from '../cli/ui.js'
-
-import { handleMessageGPT } from './gpt.js'
-
-import { transcribeOpenAI, chatCompletion } from '../providers/openai.js'
-import { handleMessageNotion } from './notion.js'
-import { handleMessageResearch } from './handleMessageResearch.js'
-
+import { transcribeOpenAI } from '../providers/openai.js'
+import { runAgent, resetConversation } from '../providers/claude.js'
 import { botReadyTimestamp } from '../index.js'
-import { handleExchangeCalculation } from './handleExchangeCalculation.js'
-
-const TODO_KEYWORDS = ['todo', 'to do', 'to-do']
 
 async function handleIncomingMessage(message) {
   let messageString = message.body
 
-  if (message.hasQuotedMsg) {
-    let { body } = message
-    const quotedMessage = message._data.quotedMsg.body
-
-    body = body.toLowerCase().trim()
-
-    if (body === 'summarize') {
-      const prompt = `Please summare this text: ${quotedMessage}`
-      await handleMessageGPT(message, prompt)
-      return
-    }
-    if (body === 'action') {
-      const prompt = `Generate list of reasonable-sized action items, based on this message. Don’t overcomplicate stuff. Focus on the important tasks. Rather less than more. Only respond with the list.: ${quotedMessage}`
-      await handleMessageGPT(message, prompt)
-      return
-    }
-
-    if (body === config.gptPrefix) {
-      const prompt = `What Can you add and say to this message? ${quotedMessage}`
-      await handleMessageGPT(message, prompt)
-      return
-    }
-
-    if (body === 'research') {
-      const prompt = `Please research to this message: ${quotedMessage}`
-      await handleMessageResearch(message, prompt)
-      return
-    }
-
-    if (TODO_KEYWORDS.includes(body)) {
-      await handleMessageNotion(message, quotedMessage)
-      return
-    }
-  }
-
+  // Filter old messages
   if (message.timestamp != null && botReadyTimestamp != null) {
     const messageTimestamp = new Date(message.timestamp * 1000)
-
     if (messageTimestamp < botReadyTimestamp) {
       cli.print(`Ignoring old message: ${messageString || '[Media Message]'}`)
       return
     }
   } else if (botReadyTimestamp == null) {
-    cli.print(
-      `Ignoring message because bot is not ready yet: ${messageString || '[Media Message]'}`,
-    )
+    cli.print(`Ignoring message because bot is not ready yet: ${messageString || '[Media Message]'}`)
     return
   }
 
+  // Group chat filter
   const chat = await message.getChat()
   if (chat.isGroup && !config.groupchatsEnabled) {
     cli.print(`Ignoring message from group chat ${chat.name} as group chats are disabled.`)
     return
   }
 
+  // Handle reset command
+  if (messageString && messageString.toLowerCase().trim() === config.resetPrefix) {
+    resetConversation(message.from)
+    message.reply('Conversation reset.')
+    return
+  }
+
+  // Handle voice messages: transcribe then send to agent
   if (message.hasMedia) {
     const media = await message.downloadMedia()
 
@@ -87,50 +48,72 @@ async function handleIncomingMessage(message) {
     }
 
     const mediaBuffer = Buffer.from(media.data, 'base64')
-
-    cli.print(`[Transcription] Transcribing audio with "${config.transcriptionMode}" ...`)
+    cli.print(`[Transcription] Transcribing audio ...`)
 
     const res = await transcribeOpenAI(mediaBuffer)
-
-    const { text: transcribedText, language: transcribedLanguage } = res || {}
+    const { text: transcribedText } = res || {}
 
     if (!transcribedText) {
       message.reply("I couldn't understand what you said.")
       return
     }
 
-    cli.print(
-      `[Transcription] Transcription response: ${transcribedText} (language: ${
-        transcribedLanguage || 'unknown'
-      })`,
-    )
+    cli.print(`[Transcription] Transcribed: ${transcribedText}`)
 
-    const reply = `🎤 ${transcribedText}`
-    message.reply(reply)
+    // Send transcription to agent so it can respond intelligently
+    const agentInput = `🎤 Voice message transcription: "${transcribedText}"`
+    const toolContext = { senderId: message.from, chatName: chat.name }
 
+    try {
+      const response = await runAgent(agentInput, message.from, toolContext)
+      message.reply(`🎤 _${transcribedText}_\n\n${response}`)
+    } catch (error) {
+      console.error('Agent error on voice message:', error)
+      message.reply(`🎤 _${transcribedText}_`)
+    }
     return
   }
 
-  if (startsWithIgnoreCase(messageString, config.gptPrefix)) {
-    const prompt = messageString.substring(config.gptPrefix.length + 1)
-    await handleMessageGPT(message, prompt)
-    return
+  // Build context for quoted messages
+  let agentInput = messageString
+  if (message.hasQuotedMsg) {
+    const quotedMessage = message._data.quotedMsg.body
+    agentInput = `[User replied to this message: "${quotedMessage}"]\n\nUser's reply: ${messageString}`
   }
 
-  if (['exchange', 'xe'].some(keyword => startsWithIgnoreCase(messageString, keyword))) {
-    const prompt = messageString.split(' ').slice(1).join(' ')
-    await handleExchangeCalculation(message, prompt)
-    return
+  if (!agentInput || agentInput.trim() === '') return
+
+  // Check prefix requirement
+  if (config.prefixEnabled) {
+    const isFromMe = message.fromMe
+    const skipPrefix = isFromMe && config.prefixSkippedForMe
+
+    if (!skipPrefix) {
+      const prefixes = [config.gptPrefix, 'research', 'exchange', 'xe', 'todo', 'to do', 'to-do']
+      const hasPrefix = prefixes.some(
+        p => agentInput.toLowerCase().startsWith(p.toLowerCase()),
+      )
+      if (!hasPrefix) return
+    }
+
+    // Strip the gpt prefix if present, but keep others as context for the agent
+    if (agentInput.toLowerCase().startsWith(config.gptPrefix.toLowerCase())) {
+      agentInput = agentInput.substring(config.gptPrefix.length).trim()
+    }
   }
 
-  if (TODO_KEYWORDS.some(keyword => startsWithIgnoreCase(messageString, keyword))) {
-    const prompt = messageString.substring(5)
-    await handleMessageNotion(message, prompt)
-    return
-  }
+  cli.print(`[Agent] Message from ${message.from}: ${agentInput}`)
 
-  if (startsWithIgnoreCase(messageString, 'research')) {
-    await handleMessageResearch(message, messageString)
+  const toolContext = { senderId: message.from, chatName: chat.name }
+
+  try {
+    const response = await runAgent(agentInput, message.from, toolContext)
+    if (response) {
+      message.reply(response)
+    }
+  } catch (error) {
+    console.error('Agent error:', error)
+    message.reply('An error occurred, please contact the administrator. (' + error.message + ')')
   }
 }
 

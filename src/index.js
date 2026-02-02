@@ -8,6 +8,7 @@ import { handleIncomingMessage } from './handlers/message.js'
 
 import { initOpenAI } from './providers/openai.js'
 import { initPerplexity } from './providers/perplexity.js'
+import { initClaude } from './providers/claude.js'
 import { setupCronJobs } from './cron/cron.js'
 
 let botReadyTimestamp = null
@@ -53,8 +54,9 @@ const start = async () => {
         setupCronJobs(client)
       }
 
-      initOpenAI()
-      initPerplexity()
+      initOpenAI() // Still needed for Whisper transcription
+      initPerplexity() // Still needed as a tool backend
+      initClaude() // The agent brain
     })
 
     client.on(Events.MESSAGE_RECEIVED, async message => {

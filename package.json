@@ -1,7 +1,7 @@
 {
   "name": "whatsapp-chatgpt",
   "version": "1.0.1",
-  "description": "Whatsapp bot that uses OpenAI's GPT & DALLE to respond to user inputs",
+  "description": "WhatsApp AI agent powered by Claude Opus 4.5 with tool-use capabilities",
   "main": "src/index.js",
   "type": "module",
   "author": "Askrella Software Agency UG (haftungsbeschränkt)",
@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@abskmj/exchangeratesapi": "^3.0.1",
+    "@anthropic-ai/sdk": "^0.72.1",
     "@clack/prompts": "^0.11.0",
     "@notionhq/client": "^2.2.4",
     "axios": "^1.8.4",
