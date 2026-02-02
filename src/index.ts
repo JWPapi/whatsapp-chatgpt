@@ -34,7 +34,6 @@ console.log('environment:', process.env.ENVIRONMENT)
 const client = new Client({
   authStrategy: new LocalAuth(),
   markOnlineOnConnect: false,
-  userAgent: false as any,
   webVersionCache: { type: 'none' },
   authTimeoutMs: 300000, // 5 minutes for first QR auth
   qrMaxRetries: 5,
