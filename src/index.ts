@@ -40,7 +40,7 @@ const client = new Client({
   puppeteer: {
     headless: true,
     ...(process.env.PUPPETEER_EXECUTABLE_PATH ? { executablePath: process.env.PUPPETEER_EXECUTABLE_PATH } : {}),
-    protocolTimeout: 120000, // 2 minute timeout
+    protocolTimeout: 180000, // 3 minute timeout
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',

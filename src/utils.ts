@@ -100,22 +100,26 @@ export const safeSendMessage = async (
   content: string,
   options: ReplyOptions = { sendSeen: false },
 ): Promise<Message | undefined> => {
-  try {
-    return await client.sendMessage(chatId, content, options)
-  } catch (error) {
-    const err = error as Error
-    if (err.message?.includes('markedUnread') || err.message?.includes('undefined')) {
-      console.error('[SafeSend] WhatsApp internal error:', err.message)
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      try {
-        return await client.sendMessage(chatId, content, options)
-      } catch (retryError) {
-        const retryErr = retryError as Error
-        console.error('[SafeSend] Retry also failed:', retryErr.message)
-        throw retryError
+  const maxRetries = 3
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await client.sendMessage(chatId, content, options)
+    } catch (error) {
+      const err = error as Error
+      const isRetryable =
+        err.message?.includes('markedUnread') ||
+        err.message?.includes('undefined') ||
+        err.message?.includes('ProtocolError') ||
+        err.message?.includes('timed out')
+
+      if (isRetryable && attempt < maxRetries) {
+        const delay = attempt * 5000
+        console.error(`[SafeSend] Attempt ${attempt}/${maxRetries} failed: ${err.message}. Retrying in ${delay}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delay))
+        continue
       }
+      throw error
     }
-    throw error
   }
 }
 
