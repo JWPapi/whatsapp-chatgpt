@@ -54,6 +54,8 @@ export function logAvailableFeatures(): void {
     features.push('Document generation')
   }
 
+  features.push('YouTube transcripts')
+
   if (config.vercelBlobToken) {
     features.push('Cloud upload (Vercel Blob)')
   }
@@ -148,6 +150,12 @@ function buildMcpServers(): Record<string, any> {
     }
   }
 
+  // YouTube transcripts - always enabled, no API key needed
+  servers['youtube'] = {
+    command: 'npx',
+    args: ['-y', '@kimtaeyoon83/mcp-server-youtube-transcript'],
+  }
+
   return servers
 }
 
@@ -192,6 +200,7 @@ function buildAllowedTools(): string[] {
 
   if (config.documentGenerationEnabled) tools.push(...documentToolNames)
   if (process.env.NOTION_TOKEN) tools.push('mcp__notion__*')
+  tools.push('mcp__youtube__*')
 
   return tools
 }
@@ -225,6 +234,10 @@ function buildSystemPrompt(message: Message, chatId: string): string {
       '- *GitHub*: Create issues on GitHub repos with @claude to trigger autonomous coding. Use this for bug fixes, features, and refactoring tasks.',
     )
   }
+
+  capabilities.push(
+    '- *YouTube Transcripts*: Fetch transcripts from YouTube videos for summarization or Q&A',
+  )
 
   let prompt = `You are Jarvis, a helpful personal assistant responding via WhatsApp.
 
