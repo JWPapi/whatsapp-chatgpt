@@ -236,7 +236,7 @@ function buildSystemPrompt(message: Message, chatId: string): string {
   }
 
   capabilities.push(
-    '- *YouTube Transcripts*: Fetch transcripts from YouTube videos for summarization or Q&A',
+    '- *YouTube Transcripts*: Fetch transcripts from YouTube videos for summarization or Q&A. Only works if the video has captions enabled.',
   )
 
   let prompt = `You are Jarvis, a helpful personal assistant responding via WhatsApp.
@@ -258,6 +258,7 @@ ${capabilities.join('\n')}
 ## Tool Usage Notes
 - For document generation, use the MCP document tools (generate_pdf, generate_excel, generate_powerpoint)
 - For Notion tasks/todos, use the Notion MCP tools to find and create pages
+- For YouTube videos: If transcript fetching fails (no captions available), tell the user the video doesn't have captions enabled. Suggest they try: (1) searching the web for an existing summary/transcript of the video, or (2) watching the video directly
 
 ## Conversation Memory
 You have memory of the conversation. If the user refers to something mentioned earlier, use the context provided.`
