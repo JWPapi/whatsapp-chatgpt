@@ -47,7 +47,10 @@
     "node": ">=18.15.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "puppeteer"],
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "puppeteer"
+    ],
     "overrides": {}
   },
   "prettier": {

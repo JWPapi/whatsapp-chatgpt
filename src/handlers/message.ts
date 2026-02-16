@@ -13,7 +13,7 @@ import config from '../config.js'
 import * as cli from '../cli/ui.js'
 import { transcribeOpenAI } from '../providers/openai.js'
 import { botReadyTimestamp } from '../index.js'
-import { handleMessage, evaluateMessage } from '../agent.js'
+import { handleMessage, activateSession, isSessionActive, consumeSessionMessage } from '../agent.js'
 import type { Message } from '../types.js'
 
 // ============================================================================
@@ -96,9 +96,10 @@ async function handleIncomingMessage(message: Message): Promise<void> {
 
   if (!textToProcess?.trim()) return
 
-  // 4. Check for agent prefix (ag/jarvis) — direct to agent
+  // 4. Check for agent prefix (ag/jarvis) — activate session + handle
   if (startsWithIgnoreCase(textToProcess, config.agentPrefix)) {
     const prompt = textToProcess.substring(config.agentPrefix.length + 1).trim()
+    activateSession(chatId)
     if (prompt) {
       await handleMessage(message, prompt, chatId)
     } else {
@@ -109,6 +110,7 @@ async function handleIncomingMessage(message: Message): Promise<void> {
 
   if (startsWithIgnoreCase(textToProcess, 'jarvis')) {
     const prompt = textToProcess.substring('jarvis'.length + 1).trim()
+    activateSession(chatId)
     if (prompt) {
       await handleMessage(message, prompt, chatId)
     } else {
@@ -117,12 +119,10 @@ async function handleIncomingMessage(message: Message): Promise<void> {
     return
   }
 
-  // 5. Non-prefixed messages → let Sonnet evaluate if agent should respond
-  if (config.agentEnabled) {
-    const responded = await evaluateMessage(message, textToProcess, chatId)
-    if (!responded) {
-      cli.print(`[Jarvis] Chose not to respond to: "${textToProcess.substring(0, 30)}..."`)
-    }
+  // 5. Non-prefixed messages → respond only if session is active
+  if (isSessionActive(chatId)) {
+    consumeSessionMessage(chatId)
+    await handleMessage(message, textToProcess, chatId)
   }
 }
 

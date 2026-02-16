@@ -82,6 +82,34 @@ const conversationHistory = new Map<string, ConversationMessage[]>()
 const HISTORY_MAX_MESSAGES = 20
 const HISTORY_EXPIRY_MS = 30 * 60 * 1000
 
+// ── Active session tracking ──
+// When a user sends "jarvis ...", they get 10 messages of active conversation.
+// Each subsequent non-prefixed message decrements the counter.
+// A new "jarvis" prefix resets it to 10.
+const ACTIVE_SESSION_MESSAGES = 10
+const activeSessions = new Map<string, number>()
+
+export function activateSession(chatId: string): void {
+  activeSessions.set(chatId, ACTIVE_SESSION_MESSAGES)
+  cli.print(`[Jarvis] Session activated for ${chatId.slice(-4)} (${ACTIVE_SESSION_MESSAGES} messages)`)
+}
+
+export function isSessionActive(chatId: string): boolean {
+  const remaining = activeSessions.get(chatId) || 0
+  return remaining > 0
+}
+
+export function consumeSessionMessage(chatId: string): void {
+  const remaining = activeSessions.get(chatId) || 0
+  if (remaining <= 1) {
+    activeSessions.delete(chatId)
+    cli.print(`[Jarvis] Session expired for ${chatId.slice(-4)}`)
+  } else {
+    activeSessions.set(chatId, remaining - 1)
+    cli.print(`[Jarvis] ${remaining - 1} messages remaining for ${chatId.slice(-4)}`)
+  }
+}
+
 function getConversationContext(chatId: string): string {
   const history = conversationHistory.get(chatId) || []
   const now = Date.now()
@@ -427,66 +455,3 @@ export async function handleMessage(message: Message, prompt: string, chatId: st
   }
 }
 
-/** Evaluate whether to respond to non-prefixed messages (cheap gate with Sonnet) */
-export async function evaluateMessage(
-  message: Message,
-  prompt: string,
-  chatId: string,
-): Promise<boolean> {
-  if (!prompt?.trim() || !isAgentAvailable()) return false
-
-  cli.print(`[Jarvis] Evaluating: "${prompt.substring(0, 40)}..."`)
-
-  addToHistory(chatId, 'user', prompt)
-
-  try {
-    let result = ''
-    const conversationContext = getConversationContext(chatId)
-
-    const systemPrompt = `You are Jarvis, a helpful assistant in a WhatsApp chat. Your DEFAULT is to NOT respond. Output exactly "NO_RESPONSE" unless you are very confident the message is meant for you.
-
-ONLY respond when ALL of these are true:
-- The message explicitly mentions you by name ("Jarvis"), OR is a direct reply to something you JUST said in the last 1-2 messages
-- The message clearly expects a response from you (a question, a request, or a direct follow-up)
-
-ALWAYS output "NO_RESPONSE" when:
-- The message doesn't mention you by name and isn't a direct follow-up to your last message
-- People are having a conversation with each other
-- It's small talk, acknowledgements ("ok", "thanks", "cool", "haha", "lol"), reactions, or casual chatter
-- Someone asks a question but is clearly asking another person, not you
-- You're unsure whether the message is directed at you — when in doubt, do NOT respond
-- The message is a general statement, opinion, or thought not directed at anyone specific
-
-When you DO respond, be concise and helpful. Format for WhatsApp (*bold*, - lists).
-If you don't respond, output exactly: NO_RESPONSE
-
-${conversationContext}`
-
-    for await (const msg of query({
-      prompt: prompt.trim(),
-      options: {
-        model: 'claude-sonnet-4-20250514',
-        allowedTools: ['WebSearch', 'WebFetch'],
-        permissionMode: 'bypassPermissions',
-        allowDangerouslySkipPermissions: true,
-        systemPrompt,
-        maxTurns: 3,
-        persistSession: false,
-      },
-    })) {
-      if ('result' in msg && typeof msg.result === 'string') {
-        result = msg.result
-      }
-    }
-
-    if (!result || result.trim() === 'NO_RESPONSE' || result.trim().startsWith('NO_RESPONSE')) {
-      return false
-    }
-
-    await handleMessage(message, prompt, chatId)
-    return true
-  } catch (error) {
-    cli.print(`[Jarvis] Evaluation error: ${error}`)
-    return false
-  }
-}
