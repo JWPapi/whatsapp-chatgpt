@@ -4,7 +4,6 @@ import { Client, Events, LocalAuth } from 'whatsapp-web.js'
 import constants from './constants.js'
 import * as cli from './cli/ui.js'
 import { handleIncomingMessage } from './handlers/message.js'
-import { setupCronJobs } from './cron/cron.js'
 import { logAvailableFeatures } from './agent.js'
 
 // Global error handlers to prevent crashes from whatsapp-web.js internal errors
@@ -85,7 +84,10 @@ const start = async (): Promise<void> => {
       const debugInterval = setInterval(async () => {
         try {
           const page = (client as any).pupPage
-          if (!page) { console.log('[DEBUG] No pupPage yet'); return }
+          if (!page) {
+            console.log('[DEBUG] No pupPage yet')
+            return
+          }
           const url = page.url()
           const title = await page.title()
           const html = await page.evaluate(() => document.body?.innerHTML?.substring(0, 500) || 'no body')
@@ -118,10 +120,6 @@ const start = async (): Promise<void> => {
 
       botReadyTimestamp = new Date()
 
-      if (process.env.JW_VERSION === 'true') {
-        setupCronJobs(client)
-      }
-      // Providers use lazy initialization - no explicit init needed
     })
 
     client.on(Events.MESSAGE_RECEIVED, async message => {
