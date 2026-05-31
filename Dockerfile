@@ -10,7 +10,7 @@ RUN apt update && apt install -y \
   && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.29.2 --activate
 
 # Create non-root user
 RUN useradd -m -s /bin/bash botuser

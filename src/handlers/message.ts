@@ -26,9 +26,21 @@ import type { Message } from '../types.js'
 async function transcribeAudio(message: Message): Promise<string | null> {
   if (!message.hasMedia) return null
 
-  const media = await message.downloadMedia()
+  let media
+  try {
+    media = await message.downloadMedia()
+  } catch (error) {
+    const err = error as Error
+    cli.print(`[Transcription] Failed to download media: ${err.message}`)
+    return null
+  }
 
-  if (!media || !media.mimetype.startsWith('audio/')) {
+  if (!media?.data) {
+    cli.print('[Transcription] Media download returned empty data, skipping')
+    return null
+  }
+
+  if (!media.mimetype.startsWith('audio/')) {
     cli.print('[Message] Received non-audio media, ignoring')
     return null
   }
@@ -39,13 +51,19 @@ async function transcribeAudio(message: Message): Promise<string | null> {
   }
 
   const mediaBuffer = Buffer.from(media.data, 'base64')
-  cli.print(`[Transcription] Transcribing audio with "${config.transcriptionMode}"...`)
+
+  if (mediaBuffer.length < 100) {
+    cli.print(`[Transcription] Audio buffer suspiciously small (${mediaBuffer.length} bytes), skipping`)
+    return null
+  }
+
+  cli.print(`[Transcription] Transcribing ${(mediaBuffer.length / 1024).toFixed(1)}KB audio with "${config.transcriptionMode}"...`)
 
   const res = await transcribeOpenAI(mediaBuffer)
   const { text: transcribedText, language } = res || {}
 
   if (!transcribedText) {
-    await safeReply(message, "I couldn't understand what you said.")
+    await safeReply(message, "Couldn't transcribe that voice message. Try again?")
     return null
   }
 
@@ -95,6 +113,11 @@ async function handleIncomingMessage(message: Message): Promise<void> {
   }
 
   if (!textToProcess?.trim()) return
+  // Skip non-prefixed fromMe messages to prevent echo loops
+  // Bot replies (fromMe) should never trigger session-based responses
+  if (message.fromMe && !startsWithIgnoreCase(textToProcess, config.agentPrefix) && !startsWithIgnoreCase(textToProcess, "jarvis")) {
+    return
+  }
 
   // 4. Check for agent prefix (ag/jarvis) — activate session + handle
   if (startsWithIgnoreCase(textToProcess, config.agentPrefix)) {

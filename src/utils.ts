@@ -4,6 +4,19 @@ import { MessageMedia } from 'whatsapp-web.js'
 // WhatsApp message size limit
 export const WHATSAPP_MAX_LENGTH = 4000
 
+// Track message IDs sent by the bot to prevent echo loops
+const BOT_SENT_IDS_MAX = 500
+export const botSentMessageIds = new Set<string>()
+
+function trackSentMessage(msg: Message | undefined): void {
+  if (!msg?.id?._serialized) return
+  botSentMessageIds.add(msg.id._serialized)
+  if (botSentMessageIds.size > BOT_SENT_IDS_MAX) {
+    const first = botSentMessageIds.values().next().value
+    if (first) botSentMessageIds.delete(first)
+  }
+}
+
 /**
  * Get chat ID from message for conversation tracking
  */
@@ -76,14 +89,18 @@ export const safeReply = async (
   options: ReplyOptions = { sendSeen: false },
 ): Promise<Message | undefined> => {
   try {
-    return await message.reply(content, chatId, options)
+    const sent = await message.reply(content, chatId, options)
+    trackSentMessage(sent)
+    return sent
   } catch (error) {
     const err = error as Error
     if (err.message?.includes('markedUnread') || err.message?.includes('undefined')) {
       console.error('[SafeReply] WhatsApp internal error, attempting fallback send:', err.message)
       try {
         const chat = await message.getChat()
-        return await chat.sendMessage(content)
+        const sent = await chat.sendMessage(content)
+        trackSentMessage(sent)
+        return sent
       } catch (fallbackError) {
         const fallbackErr = fallbackError as Error
         console.error('[SafeReply] Fallback send also failed:', fallbackErr.message)
@@ -103,7 +120,9 @@ export const safeSendMessage = async (
   const maxRetries = 3
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      return await client.sendMessage(chatId, content, options)
+      const sent = await client.sendMessage(chatId, content, options)
+      trackSentMessage(sent)
+      return sent
     } catch (error) {
       const err = error as Error
       const isRetryable =
@@ -136,17 +155,21 @@ export const safeReplyMedia = async (
   const messageMedia = new MessageMedia(media.mimetype, media.base64, media.filename)
 
   try {
-    return await message.reply(messageMedia, undefined, {
+    const sent = await message.reply(messageMedia, undefined, {
       caption: options.caption,
       sendSeen: options.sendSeen ?? false,
     })
+    trackSentMessage(sent)
+    return sent
   } catch (error) {
     const err = error as Error
     if (err.message?.includes('markedUnread') || err.message?.includes('undefined')) {
       console.error('[SafeReplyMedia] WhatsApp internal error, attempting fallback:', err.message)
       try {
         const chat = await message.getChat()
-        return await chat.sendMessage(messageMedia, { caption: options.caption })
+        const sent = await chat.sendMessage(messageMedia, { caption: options.caption })
+        trackSentMessage(sent)
+        return sent
       } catch (fallbackError) {
         const fallbackErr = fallbackError as Error
         console.error('[SafeReplyMedia] Fallback also failed:', fallbackErr.message)

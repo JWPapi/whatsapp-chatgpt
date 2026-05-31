@@ -1,11 +1,12 @@
+import fs from 'fs'
 import qrcode from 'qrcode-terminal'
 import { Client, Events, LocalAuth } from 'whatsapp-web.js'
 
 import constants from './constants.js'
 import * as cli from './cli/ui.js'
 import { handleIncomingMessage } from './handlers/message.js'
-import { setupCronJobs } from './cron/cron.js'
 import { logAvailableFeatures } from './agent.js'
+import { botSentMessageIds } from './utils.js'
 
 // Global error handlers to prevent crashes from whatsapp-web.js internal errors
 process.on('unhandledRejection', (reason: unknown) => {
@@ -28,6 +29,12 @@ process.on('uncaughtException', (error: Error) => {
 })
 
 export let botReadyTimestamp: Date | null = null
+
+// Heartbeat file for Docker healthcheck - touched on every successful message
+const HEARTBEAT_PATH = '/tmp/bot-heartbeat'
+export function touchHeartbeat(): void {
+  try { fs.writeFileSync(HEARTBEAT_PATH, Date.now().toString()) } catch {}
+}
 
 console.log('environment:', process.env.ENVIRONMENT)
 
@@ -117,10 +124,8 @@ const start = async (): Promise<void> => {
       logAvailableFeatures()
 
       botReadyTimestamp = new Date()
+      touchHeartbeat()
 
-      if (process.env.JW_VERSION === 'true') {
-        setupCronJobs(client)
-      }
       // Providers use lazy initialization - no explicit init needed
     })
 
@@ -132,6 +137,7 @@ const start = async (): Promise<void> => {
         }
 
         await handleIncomingMessage(message)
+        touchHeartbeat()
       } catch (error) {
         const err = error as Error
         console.error('[MESSAGE_RECEIVED] Error handling message:', err.message)
@@ -143,6 +149,13 @@ const start = async (): Promise<void> => {
         if (message.from == constants.statusBroadcast) return
 
         if (!message.fromMe) return
+
+        // Skip messages sent by the bot itself to prevent echo loops
+        const messageId = message.id?._serialized
+        if (messageId && botSentMessageIds.has(messageId)) {
+          botSentMessageIds.delete(messageId)
+          return
+        }
 
         await handleIncomingMessage(message)
       } catch (error) {
